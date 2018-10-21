@@ -5,7 +5,6 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.opencv.core.Core;
-import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
 import org.opencv.core.Scalar;
@@ -46,29 +45,33 @@ public class ColourThresholdPointDetector implements IPointDetector {
     }
 
     private void setHsvColor(Scalar hsvColor) {
-        double minH = (hsvColor.val[0] >= mColorRadius.val[0]) ? hsvColor.val[0] - mColorRadius.val[0] : 0;
-        double maxH = (hsvColor.val[0]+mColorRadius.val[0] <= 255) ? hsvColor.val[0] + mColorRadius.val[0] : 255;
+//        double minH = (hsvColor.val[0] >= mColorRadius.val[0]) ? hsvColor.val[0] - mColorRadius.val[0] : 0;
+//        double maxH = (hsvColor.val[0]+mColorRadius.val[0] <= 255) ? hsvColor.val[0] + mColorRadius.val[0] : 255;
+//
+//        mLowerBound.val[0] = minH;
+//        mUpperBound.val[0] = maxH;
+//
+//        mLowerBound.val[1] = hsvColor.val[1] - mColorRadius.val[1];
+//        mUpperBound.val[1] = hsvColor.val[1] + mColorRadius.val[1];
+//
+//        mLowerBound.val[2] = hsvColor.val[2] - mColorRadius.val[2];
+//        mUpperBound.val[2] = hsvColor.val[2] + mColorRadius.val[2];
+//
+//        mLowerBound.val[3] = 0;
+//        mUpperBound.val[3] = 255;
 
-        mLowerBound.val[0] = minH;
-        mUpperBound.val[0] = maxH;
+        mLowerBound.val[0] = 0;
+        mUpperBound.val[0] = 50;
 
-        mLowerBound.val[1] = hsvColor.val[1] - mColorRadius.val[1];
-        mUpperBound.val[1] = hsvColor.val[1] + mColorRadius.val[1];
+        mLowerBound.val[1] = 48;
+        mUpperBound.val[1] = 255;
 
-        mLowerBound.val[2] = hsvColor.val[2] - mColorRadius.val[2];
-        mUpperBound.val[2] = hsvColor.val[2] + mColorRadius.val[2];
+        mLowerBound.val[2] = 80;
+        mUpperBound.val[2] = 255;
 
         mLowerBound.val[3] = 0;
         mUpperBound.val[3] = 255;
 
-        Mat spectrumHsv = new Mat(1, (int)(maxH - minH), CvType.CV_8UC3);
-
-        for (int j = 0; j < maxH - minH; j++) {
-            byte[] tmp = {(byte)(minH + j), (byte)255, (byte)255};
-            spectrumHsv.put(0, j, tmp);
-        }
-
-        Imgproc.cvtColor(spectrumHsv, mSpectrum, Imgproc.COLOR_HSV2RGB_FULL, 4);
     }
 
     public void process() {
@@ -87,6 +90,9 @@ public class ColourThresholdPointDetector implements IPointDetector {
         // Imgproc.GaussianBlur(mMask, mGaussBlurredMask, new Mat());
 
         Imgproc.findContours(mDilatedMask, tempContours, mHierarchy, Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
+
+        // Invert Mask
+        //bitwise_not(dst, dst);
 
         // Get maximal contour
         double maxArea = 0;

@@ -39,6 +39,8 @@ public class ColourThresholdPointDetector implements IPointDetector {
     private Mat mMask = new Mat();
     private Mat mDilatedMask = new Mat();
     private Mat mHierarchy = new Mat();
+    private Mat mErodedMask = new Mat();
+    private Mat mGaussBlurredMask = new Mat();
 
     public ColourThresholdPointDetector() {
         setHsvColor(mBlobColorHsv);
@@ -61,9 +63,9 @@ public class ColourThresholdPointDetector implements IPointDetector {
 //        mUpperBound.val[3] = 255;
 
         mLowerBound.val[0] = 0;
-        mUpperBound.val[0] = 50;
+        mUpperBound.val[0] = 40;
 
-        mLowerBound.val[1] = 48;
+        mLowerBound.val[1] = 45;
         mUpperBound.val[1] = 255;
 
         mLowerBound.val[2] = 80;
@@ -85,9 +87,14 @@ public class ColourThresholdPointDetector implements IPointDetector {
         // Find out if input Mat is within bounds
         Core.inRange(mHsvMat, mLowerBound, mUpperBound, mMask);
 
-        // Dilating range mask or using gauss blur
-        Imgproc.dilate(mMask, mDilatedMask, new Mat());
-        // Imgproc.GaussianBlur(mMask, mGaussBlurredMask, new Mat());
+        // Erode
+        Imgproc.erode(mMask, mErodedMask, new Mat());
+
+        // Dilating
+        Imgproc.dilate(mErodedMask, mDilatedMask, new Mat());
+
+        // Gauss Blur
+        Imgproc.GaussianBlur(mMask, mGaussBlurredMask, new Size(3,3) ,0);
 
         Imgproc.findContours(mDilatedMask, tempContours, mHierarchy, Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
 

@@ -40,32 +40,20 @@ public class ColourThresholdPointDetector implements IPointDetector {
     private Mat mDilatedMask = new Mat();
     private Mat mHierarchy = new Mat();
     private Mat mErodedMask = new Mat();
-    private Mat mGaussBlurredMask = new Mat();
+    private Mat mBlurredMask = new Mat();
 
     public ColourThresholdPointDetector() {
         setHsvColor(mBlobColorHsv);
     }
 
     private void setHsvColor(Scalar hsvColor) {
-//        double minH = (hsvColor.val[0] >= mColorRadius.val[0]) ? hsvColor.val[0] - mColorRadius.val[0] : 0;
-//        double maxH = (hsvColor.val[0]+mColorRadius.val[0] <= 255) ? hsvColor.val[0] + mColorRadius.val[0] : 255;
-//
-//        mLowerBound.val[0] = minH;
-//        mUpperBound.val[0] = maxH;
-//
-//        mLowerBound.val[1] = hsvColor.val[1] - mColorRadius.val[1];
-//        mUpperBound.val[1] = hsvColor.val[1] + mColorRadius.val[1];
-//
-//        mLowerBound.val[2] = hsvColor.val[2] - mColorRadius.val[2];
-//        mUpperBound.val[2] = hsvColor.val[2] + mColorRadius.val[2];
-//
-//        mLowerBound.val[3] = 0;
-//        mUpperBound.val[3] = 255;
+        double minH = (hsvColor.val[0] >= mColorRadius.val[0]) ? hsvColor.val[0] - mColorRadius.val[0] : 0;
+        double maxH = (hsvColor.val[0]+mColorRadius.val[0] <= 255) ? hsvColor.val[0] + mColorRadius.val[0] : 255;
 
         mLowerBound.val[0] = 0;
-        mUpperBound.val[0] = 40;
+        mUpperBound.val[0] = 20;
 
-        mLowerBound.val[1] = 45;
+        mLowerBound.val[1] = 48;
         mUpperBound.val[1] = 255;
 
         mLowerBound.val[2] = 80;
@@ -88,13 +76,13 @@ public class ColourThresholdPointDetector implements IPointDetector {
         Core.inRange(mHsvMat, mLowerBound, mUpperBound, mMask);
 
         // Erode
-        Imgproc.erode(mMask, mErodedMask, new Mat());
+        Imgproc.dilate(mMask, mErodedMask, new Mat());
 
-        // Dilating
+        // Dilating range mask or using gauss blur
         Imgproc.dilate(mErodedMask, mDilatedMask, new Mat());
 
         // Gauss Blur
-        Imgproc.GaussianBlur(mMask, mGaussBlurredMask, new Size(3,3) ,0);
+        //Imgproc.GaussianBlur(mDilatedMask, mBlurredMask, new Size(3,3),0);
 
         Imgproc.findContours(mDilatedMask, tempContours, mHierarchy, Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
 

@@ -5,7 +5,10 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.opencv.core.Core;
+import org.opencv.core.CvType;
 import org.opencv.core.Mat;
+import org.opencv.core.MatOfInt;
+import org.opencv.core.MatOfInt4;
 import org.opencv.core.MatOfPoint;
 import org.opencv.core.Scalar;
 import org.opencv.core.Size;
@@ -23,14 +26,17 @@ public class ColourThresholdPointDetector implements IPointDetector {
     // Minimum contour area in percent for contours filtering
     private static double mMinContourArea = 0.1;
 
-    // Color radius for range checking in HSV color space
-    private Scalar mColorRadius = new Scalar(25,50,50,0);
-
-    private Scalar mBlobColorHsv = new Scalar(30,41,46,0);
-
     private List<MatOfPoint> tempContours = new ArrayList<MatOfPoint>();
     private List<MatOfPoint> outerContours = new ArrayList<MatOfPoint>();
-    private Mat mSpectrum = new Mat();
+
+    private List<MatOfPoint> hullPoints = new ArrayList<MatOfPoint>();
+    private List<Integer> hullDefects = new ArrayList<Integer>();
+
+    private MatOfInt4 hullDefectsTemp = new MatOfInt4();
+
+    private MatOfPoint maxCountour = new MatOfPoint();
+    private MatOfInt hull = new MatOfInt();
+    private MatOfPoint mopOut = new MatOfPoint();
 
     private IFrame frame = new Frame(new Mat());
 
@@ -42,29 +48,24 @@ public class ColourThresholdPointDetector implements IPointDetector {
     private Mat mErodedMask = new Mat();
     private Mat mBlurredMask = new Mat();
 
-    public ColourThresholdPointDetector() {
-        setHsvColor(mBlobColorHsv);
-    }
+    @Override
+    public void process() {
 
-    private void setHsvColor(Scalar hsvColor) {
-        double minH = (hsvColor.val[0] >= mColorRadius.val[0]) ? hsvColor.val[0] - mColorRadius.val[0] : 0;
-        double maxH = (hsvColor.val[0]+mColorRadius.val[0] <= 255) ? hsvColor.val[0] + mColorRadius.val[0] : 255;
-
+        // H
         mLowerBound.val[0] = 0;
-        mUpperBound.val[0] = 20;
+        mUpperBound.val[0] = 25;
 
-        mLowerBound.val[1] = 48;
+        // S
+        mLowerBound.val[1] = 40;
         mUpperBound.val[1] = 255;
 
-        mLowerBound.val[2] = 80;
+        // V
+        mLowerBound.val[2] = 60;
         mUpperBound.val[2] = 255;
 
+        // A
         mLowerBound.val[3] = 0;
         mUpperBound.val[3] = 255;
-
-    }
-
-    public void process() {
 
         tempContours.clear();
         downSample(frame);
@@ -76,51 +77,82 @@ public class ColourThresholdPointDetector implements IPointDetector {
         Core.inRange(mHsvMat, mLowerBound, mUpperBound, mMask);
 
         // Erode
-        Imgproc.dilate(mMask, mErodedMask, new Mat());
+        Imgproc.erode(mMask, mErodedMask, new Mat());
 
         // Dilating range mask or using gauss blur
         Imgproc.dilate(mErodedMask, mDilatedMask, new Mat());
 
         // Gauss Blur
-        //Imgproc.GaussianBlur(mDilatedMask, mBlurredMask, new Size(3,3),0);
+        Imgproc.GaussianBlur(mDilatedMask, mBlurredMask, new Size(1,1),0);
 
-        Imgproc.findContours(mDilatedMask, tempContours, mHierarchy, Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
+        Imgproc.findContours(mBlurredMask, tempContours, mHierarchy, Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
 
-        // Invert Mask
-        //bitwise_not(dst, dst);
+        outerContours.clear();
+        hullPoints.clear();
+        //hullDefects.clear();
 
-        // Get maximal contour
         double maxArea = 0;
         Iterator<MatOfPoint> allContours = tempContours.iterator();
+        MatOfPoint maxContour = new MatOfPoint();
+
         while (allContours.hasNext()) {
             MatOfPoint wrapper = allContours.next();
             double area = Imgproc.contourArea(wrapper);
             if (area > maxArea) {
                 maxArea = area;
+                maxContour = wrapper;
             }
         }
 
-        // Filter contours by area and resize to fit the original image size
-        outerContours.clear();
-        allContours = tempContours.iterator();
-        while (allContours.hasNext()) {
-            MatOfPoint contour = allContours.next();
-            if (Imgproc.contourArea(contour) > mMinContourArea*maxArea) {
-                Core.multiply(contour, new Scalar(4,4), contour);
-                outerContours.add(contour);
-            }
+        if (Imgproc.contourArea(maxContour) > mMinContourArea * maxArea) {
+            Core.multiply(maxContour, new Scalar(4, 4), maxContour);
+            outerContours.add(maxContour);
+        }
+
+        Iterator<MatOfPoint> contourIterator = outerContours.iterator();
+        while (contourIterator.hasNext()) {
+            maxCountour = contourIterator.next();
+            Imgproc.convexHull(maxCountour, hull, false);
+        }
+
+        mopOut.create((int) hull.size().height, 1, CvType.CV_32SC2);
+
+        for (int i = 0; i < hull.size().height; i++) {
+            int index = (int) hull.get(i, 0)[0];
+            double[] point = new double[]{
+                    maxCountour.get(index, 0)[0], maxCountour.get(index, 0)[1]
+            };
+            mopOut.put(i, 0, point);
+        }
+
+        if (Imgproc.isContourConvex(mopOut)) {
+            hullPoints.add(mopOut);
+            Imgproc.convexityDefects(maxCountour, hull, hullDefectsTemp);
+            hullDefects = hullDefectsTemp.toList();
         }
 
     }
 
-    public List<MatOfPoint> getPoints() {
+    @Override
+    public List<MatOfPoint> getContours() {
         return outerContours;
+    }
+
+    @Override
+    public List<MatOfPoint> getHullPoints() {
+        return hullPoints;
+    }
+
+    @Override
+    public List<Integer> getHullDefects() {
+        return hullDefects;
     }
 
     public IFrame getFrame() {
         return frame;
     }
 
+    @Override
     public void setFrame(IFrame inputFrame) {
         frame = inputFrame;
     }

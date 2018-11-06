@@ -1,5 +1,6 @@
 package mquinn.sign_language.processing;
 
+import org.opencv.core.MatOfInt;
 import org.opencv.core.MatOfPoint;
 
 import java.util.List;
@@ -11,6 +12,8 @@ public interface IPointDetector {
     void process();
 
     void setFrame(IFrame inputFrame);
-    List<MatOfPoint> getPoints();
+    List<MatOfPoint> getContours();
+    List<MatOfPoint> getHullPoints();
+    List<Integer> getHullDefects();
 
 }

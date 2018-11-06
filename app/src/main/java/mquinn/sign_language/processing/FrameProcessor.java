@@ -16,7 +16,9 @@ public class FrameProcessor implements IFrameProcessor {
 
         pointDetector.setFrame(inputFrame);
         pointDetector.process();
-        inputFrame.setCountours(pointDetector.getPoints());
+        inputFrame.setCountours(pointDetector.getContours());
+        inputFrame.setHullPoints(pointDetector.getHullPoints());
+        inputFrame.setHullDefects(pointDetector.getHullDefects());
 
         return (Frame) inputFrame;
 

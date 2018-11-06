@@ -17,6 +17,7 @@ import android.view.SurfaceView;
 
 import mquinn.sign_language.display.ContourDisplayDecorator;
 import mquinn.sign_language.display.Displayer;
+import mquinn.sign_language.display.HullContourDisplayDecorator;
 import mquinn.sign_language.display.IDisplayer;
 import mquinn.sign_language.imaging.IFrame;
 import mquinn.sign_language.preprocessing.CameraFrameAdapter;
@@ -25,7 +26,6 @@ import mquinn.sign_language.processing.ColourThresholdPointDetector;
 import mquinn.sign_language.preprocessing.InputFramePreProcessor;
 import mquinn.sign_language.processing.FrameProcessor;
 import mquinn.sign_language.processing.IFrameProcessor;
-import mquinn.sign_language.processing.IPointDetector;
 
 public class MainActivity extends Activity implements CvCameraViewListener2 {
 
@@ -34,8 +34,7 @@ public class MainActivity extends Activity implements CvCameraViewListener2 {
     private IFramePreProcessor preProcessor;
     private IFrameProcessor processor;
     private IFrame preProcessedFrame, processedFrame;
-    private IDisplayer contourDisplayer;
-    private IPointDetector colourThresholdDetector;
+    private IDisplayer displayer;
 
     private BaseLoaderCallback  mLoaderCallback = new BaseLoaderCallback(this) {
         @Override
@@ -80,8 +79,8 @@ public class MainActivity extends Activity implements CvCameraViewListener2 {
         processedFrame = processor.process(preProcessedFrame);
 
         // Display contours/fill
-        contourDisplayer.setFrame(processedFrame);
-        contourDisplayer.display();
+        displayer.setFrame(processedFrame);
+        displayer.display();
 
         // Return processed Mat
         return processedFrame.getRGBA();
@@ -113,11 +112,10 @@ public class MainActivity extends Activity implements CvCameraViewListener2 {
     }
 
     public void onCameraViewStarted(int width, int height) {
-        // New up colour threshold object
-        colourThresholdDetector = new ColourThresholdPointDetector();
-
         // Create overlay displayer
-        contourDisplayer = new ContourDisplayDecorator(new Displayer());
+        displayer = new Displayer();
+        displayer = new ContourDisplayDecorator(displayer);
+        displayer = new HullContourDisplayDecorator(displayer);
 
         // New up the camera's frame processors
         preProcessor = new InputFramePreProcessor(new CameraFrameAdapter());

@@ -17,6 +17,7 @@ import android.view.SurfaceView;
 
 import mquinn.sign_language.display.ContourDisplayDecorator;
 import mquinn.sign_language.display.Displayer;
+import mquinn.sign_language.display.FeatureDisplayDecorator;
 import mquinn.sign_language.display.HullContourDisplayDecorator;
 import mquinn.sign_language.display.IDisplayer;
 import mquinn.sign_language.imaging.IFrame;
@@ -114,8 +115,9 @@ public class MainActivity extends Activity implements CvCameraViewListener2 {
     public void onCameraViewStarted(int width, int height) {
         // Create overlay displayer
         displayer = new Displayer();
-        displayer = new ContourDisplayDecorator(displayer);
-        displayer = new HullContourDisplayDecorator(displayer);
+        //displayer = new ContourDisplayDecorator(displayer);
+        //displayer = new HullContourDisplayDecorator(displayer);
+        displayer = new FeatureDisplayDecorator(displayer);
 
         // New up the camera's frame processors
         preProcessor = new InputFramePreProcessor(new CameraFrameAdapter());

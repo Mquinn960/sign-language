@@ -13,7 +13,8 @@ public interface IPointDetector {
 
     void setFrame(IFrame inputFrame);
     List<MatOfPoint> getContours();
-    List<MatOfPoint> getHullPoints();
-    List<Integer> getHullDefects();
+//    List<MatOfPoint> getHullPoints();
+//    List<Integer> getHullDefects();
 
+    List<MatOfPoint> getFeatures();
 }

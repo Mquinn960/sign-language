@@ -12,6 +12,11 @@ import org.opencv.core.MatOfInt4;
 import org.opencv.core.MatOfPoint;
 import org.opencv.core.Scalar;
 import org.opencv.core.Size;
+import org.opencv.features2d.FastFeatureDetector;
+import org.opencv.features2d.Feature2D;
+import org.opencv.features2d.FeatureDetector;
+import org.opencv.features2d.Features2d;
+import org.opencv.features2d.KAZE;
 import org.opencv.imgproc.Imgproc;
 
 import mquinn.sign_language.imaging.Frame;
@@ -26,16 +31,16 @@ public class ColourThresholdPointDetector implements IPointDetector {
     // Minimum contour area in percent for contours filtering
     private static double mMinContourArea = 0.1;
 
-    private List<MatOfPoint> tempContours = new ArrayList<MatOfPoint>();
-    private List<MatOfPoint> outerContours = new ArrayList<MatOfPoint>();
+    private List<MatOfPoint> tempContours = new ArrayList<>();
+    private List<MatOfPoint> outerContours = new ArrayList<>();
 
-    private List<MatOfPoint> hullPoints = new ArrayList<MatOfPoint>();
-    private List<Integer> hullDefects = new ArrayList<Integer>();
-
-    private MatOfInt4 hullDefectsTemp = new MatOfInt4();
+    // Temp hull contours
+    //private List<MatOfPoint> hullPoints = new ArrayList<>();
+    //private List<Integer> hullDefects = new ArrayList<>();
+    //private MatOfInt4 hullDefectsTemp = new MatOfInt4();
 
     private MatOfPoint maxCountour = new MatOfPoint();
-    private MatOfInt hull = new MatOfInt();
+    //private MatOfInt hull = new MatOfInt();
     private MatOfPoint mopOut = new MatOfPoint();
 
     private IFrame frame = new Frame(new Mat());
@@ -47,6 +52,20 @@ public class ColourThresholdPointDetector implements IPointDetector {
     private Mat mHierarchy = new Mat();
     private Mat mErodedMask = new Mat();
     private Mat mBlurredMask = new Mat();
+
+    // Skeleton
+    private Mat skeleton = new Mat();
+    private Mat structuringElement = new Mat();
+    boolean minSkeletonFound = false;
+
+    private Mat skelEroded = new Mat();
+    private Mat skelDilate = new Mat();
+    private Mat skelSubtract = new Mat();
+    private Mat skelBitwise = new Mat();
+
+    private List<MatOfPoint> features = new ArrayList<>();
+
+    // Img dimensions
 
     @Override
     public void process() {
@@ -67,6 +86,9 @@ public class ColourThresholdPointDetector implements IPointDetector {
         mLowerBound.val[3] = 0;
         mUpperBound.val[3] = 255;
 
+        // Structuring Skeleton
+        structuringElement = Imgproc.getStructuringElement(Imgproc.MORPH_CROSS,new Size(3,3));
+
         tempContours.clear();
         downSample(frame);
 
@@ -85,51 +107,101 @@ public class ColourThresholdPointDetector implements IPointDetector {
         // Gauss Blur
         Imgproc.GaussianBlur(mDilatedMask, mBlurredMask, new Size(1,1),0);
 
+        // Get contour
         Imgproc.findContours(mBlurredMask, tempContours, mHierarchy, Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
 
+        // Clear previous outer contours and hull points
         outerContours.clear();
-        hullPoints.clear();
+        //hullPoints.clear();
         //hullDefects.clear();
 
-        double maxArea = 0;
-        Iterator<MatOfPoint> allContours = tempContours.iterator();
-        MatOfPoint maxContour = new MatOfPoint();
+        if (tempContours.size() > 0){
+            double maxArea = 0;
+            Iterator<MatOfPoint> allContours = tempContours.iterator();
+            MatOfPoint maxContour = new MatOfPoint();
 
-        while (allContours.hasNext()) {
-            MatOfPoint wrapper = allContours.next();
-            double area = Imgproc.contourArea(wrapper);
-            if (area > maxArea) {
-                maxArea = area;
-                maxContour = wrapper;
+            while (allContours.hasNext()) {
+                MatOfPoint wrapper = allContours.next();
+                double area = Imgproc.contourArea(wrapper);
+                if (area > maxArea) {
+                    maxArea = area;
+                    maxContour = wrapper;
+                }
             }
+
+            if (Imgproc.contourArea(maxContour) > mMinContourArea * maxArea) {
+                Core.multiply(maxContour, new Scalar(4, 4), maxContour);
+                outerContours.add(maxContour);
+            }
+
+            // Construct Skeleton
+            minSkeletonFound = false;
+
+            Iterator<MatOfPoint> handContourIterator = outerContours.iterator();
+
+
+            while (handContourIterator.hasNext()) {
+                Mat handThreshold = handContourIterator.next();
+                Mat skelBG = new Mat (handThreshold.rows(), handThreshold.cols(), CvType.CV_8UC1, new Scalar (0));
+                while (!minSkeletonFound){
+                    // Erode
+                    Imgproc.erode(handThreshold, skelEroded, structuringElement);
+                    // Dilate
+                    Imgproc.dilate(skelEroded, skelDilate, structuringElement);
+                    // Subtract
+                    Core.subtract(handThreshold, skelDilate, skelSubtract);
+                    // Bitwise OR
+                    Core.bitwise_or(skelBG, skelSubtract, skeleton);
+                    // Copy eroded phase upwards
+                    skelEroded.copyTo(handThreshold);
+
+                    minSkeletonFound = (Core.countNonZero(skelEroded) == 0);
+                }
+
+                MatOfPoint points = new MatOfPoint();
+
+                int blockSize = 2;
+                int apertureSize = 3;
+                double k = 0.04;
+
+                Imgproc.goodFeaturesToTrack(handThreshold, points, 100, 0.01, 10);
+
+                features.add(points);
+
+            }
+
+
+
+
+            // Hull contouring
+
+//            Iterator<MatOfPoint> contourIterator = outerContours.iterator();
+//            while (contourIterator.hasNext()) {
+//                maxCountour = contourIterator.next();
+//                Imgproc.convexHull(maxCountour, hull, false);
+//            }
+//
+//            mopOut.create((int) hull.size().height, 1, CvType.CV_32SC2);
+//
+//            for (int i = 0; i < hull.size().height; i++) {
+//                int index = (int) hull.get(i, 0)[0];
+//                double[] point = new double[]{
+//                        maxCountour.get(index, 0)[0], maxCountour.get(index, 0)[1]
+//                };
+//                mopOut.put(i, 0, point);
+//            }
+//
+//            if (Imgproc.isContourConvex(mopOut)) {
+//                hullPoints.add(mopOut);
+//                Imgproc.convexityDefects(maxCountour, hull, hullDefectsTemp);
+//                hullDefects = hullDefectsTemp.toList();
+//            }
+
+
+
         }
 
-        if (Imgproc.contourArea(maxContour) > mMinContourArea * maxArea) {
-            Core.multiply(maxContour, new Scalar(4, 4), maxContour);
-            outerContours.add(maxContour);
-        }
 
-        Iterator<MatOfPoint> contourIterator = outerContours.iterator();
-        while (contourIterator.hasNext()) {
-            maxCountour = contourIterator.next();
-            Imgproc.convexHull(maxCountour, hull, false);
-        }
-
-        mopOut.create((int) hull.size().height, 1, CvType.CV_32SC2);
-
-        for (int i = 0; i < hull.size().height; i++) {
-            int index = (int) hull.get(i, 0)[0];
-            double[] point = new double[]{
-                    maxCountour.get(index, 0)[0], maxCountour.get(index, 0)[1]
-            };
-            mopOut.put(i, 0, point);
-        }
-
-        if (Imgproc.isContourConvex(mopOut)) {
-            hullPoints.add(mopOut);
-            Imgproc.convexityDefects(maxCountour, hull, hullDefectsTemp);
-            hullDefects = hullDefectsTemp.toList();
-        }
 
     }
 
@@ -138,14 +210,19 @@ public class ColourThresholdPointDetector implements IPointDetector {
         return outerContours;
     }
 
-    @Override
-    public List<MatOfPoint> getHullPoints() {
-        return hullPoints;
-    }
+//    @Override
+//    public List<MatOfPoint> getHullPoints() {
+//        return hullPoints;
+//    }
+//
+//    @Override
+//    public List<Integer> getHullDefects() {
+//        return hullDefects;
+//    }
 
     @Override
-    public List<Integer> getHullDefects() {
-        return hullDefects;
+    public List<MatOfPoint> getFeatures() {
+        return features;
     }
 
     public IFrame getFrame() {

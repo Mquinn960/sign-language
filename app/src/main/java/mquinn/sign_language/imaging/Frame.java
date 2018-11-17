@@ -11,6 +11,7 @@ public class Frame extends Mat implements IFrame {
     private Mat rGBA;
     private List<MatOfPoint> contours;
     private List<MatOfPoint> hullPoints;
+    private List<MatOfPoint> features;
     private List<Integer> hullDefects;
 
     public Frame(Mat inputRGBA) {
@@ -55,5 +56,15 @@ public class Frame extends Mat implements IFrame {
     @Override
     public void setHullDefects(List<Integer> hullDefects) {
         this.hullDefects = hullDefects;
+    }
+
+    @Override
+    public List<MatOfPoint> getFeatures() {
+        return features;
+    }
+
+    @Override
+    public void setFeatures(List<MatOfPoint> features) {
+        this.features = features;
     }
 }

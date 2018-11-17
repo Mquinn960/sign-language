@@ -21,4 +21,7 @@ public interface IFrame {
     List<Integer> getHullDefects();
     void setHullDefects(List<Integer> hullDefects);
 
+    List<MatOfPoint> getFeatures();
+    void setFeatures(List<MatOfPoint> features);
+
 }

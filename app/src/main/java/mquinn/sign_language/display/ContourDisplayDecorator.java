@@ -26,7 +26,7 @@ public class ContourDisplayDecorator extends DisplayDecorator {
                              frame.getContours(),
                              -1,
                              contourColour,
-                             2);
+                             -1);
 
     }
 

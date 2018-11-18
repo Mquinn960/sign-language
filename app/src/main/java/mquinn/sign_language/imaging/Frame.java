@@ -10,6 +10,7 @@ public class Frame extends Mat implements IFrame {
     private Mat rGBA;
     private List<MatOfPoint> contours;
     private Mat downSampledMat;
+    private List<MatOfPoint> features;
 
     public Frame(Mat inputRGBA) {
         rGBA = inputRGBA;
@@ -43,5 +44,15 @@ public class Frame extends Mat implements IFrame {
     @Override
     public void setDownSampledMat(Mat inputDownSampledMat) {
         downSampledMat = inputDownSampledMat;
+    }
+
+    @Override
+    public List<MatOfPoint> getFeatures() {
+        return features;
+    }
+
+    @Override
+    public void setFeatures(List<MatOfPoint> inputFeatures) {
+        features = inputFeatures;
     }
 }

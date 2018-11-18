@@ -8,28 +8,32 @@ import mquinn.sign_language.imaging.IFrame;
 
 public class DownSamplingFrameProcessor implements IFrameProcessor {
 
-    private Mat downSampledInputMat = new Mat();
+    private Mat downSampledInputMat;
+
+    public DownSamplingFrameProcessor() {
+        downSampledInputMat = new Mat();
+    }
 
     @Override
     public IFrame process(IFrame inputFrame) {
         return downSample(inputFrame);
     }
 
-    private IFrame downSample(IFrame inputFrame){
-        Imgproc.pyrDown(inputFrame.getRGBA(), downSampledInputMat);
+    private IFrame downSample(IFrame frameToSample){
+        Imgproc.pyrDown(frameToSample.getRGBA(), downSampledInputMat);
         Imgproc.pyrDown(downSampledInputMat, downSampledInputMat);
-        inputFrame.setDownSampledMat(downSampledInputMat);
-        return inputFrame;
+        frameToSample.setDownSampledMat(downSampledInputMat);
+        return frameToSample;
     }
 
-    private IFrame downSample(IFrame inputFrame, double scale) {
-        Imgproc.pyrDown(inputFrame.getRGBA(),
+    private IFrame downSample(IFrame frameToSample, double scale) {
+        Imgproc.pyrDown(frameToSample.getRGBA(),
                 downSampledInputMat,
-                new Size((double) inputFrame.getRGBA().width() / scale,
-                        (double) inputFrame.getRGBA().height() / scale));
+                new Size((double) frameToSample.getRGBA().width() / scale,
+                        (double) frameToSample.getRGBA().height() / scale));
 
-        inputFrame.setDownSampledMat(downSampledInputMat);
-        return inputFrame;
+        frameToSample.setDownSampledMat(downSampledInputMat);
+        return frameToSample;
     }
 
 }

@@ -18,14 +18,17 @@ import android.view.SurfaceView;
 import mquinn.sign_language.display.ContourDisplayDecorator;
 import mquinn.sign_language.display.Displayer;
 import mquinn.sign_language.display.IDisplayer;
+import mquinn.sign_language.display.SkeletonDisplayDecorator;
 import mquinn.sign_language.imaging.IFrame;
 import mquinn.sign_language.preprocessing.CameraFrameAdapter;
 import mquinn.sign_language.preprocessing.IFramePreProcessor;
+import mquinn.sign_language.preprocessing.StaticFrameAdapter;
 import mquinn.sign_language.processing.ColourThresholdFrameProcessor;
 import mquinn.sign_language.preprocessing.InputFramePreProcessor;
 import mquinn.sign_language.processing.DownSamplingFrameProcessor;
 import mquinn.sign_language.processing.FrameProcessor;
 import mquinn.sign_language.processing.IFrameProcessor;
+import mquinn.sign_language.processing.SkeletonFrameProcessor;
 
 public class MainActivity extends Activity implements CvCameraViewListener2 {
 
@@ -34,7 +37,7 @@ public class MainActivity extends Activity implements CvCameraViewListener2 {
     private IFramePreProcessor preProcessor;
     private IFrameProcessor processor;
     private IFrame preProcessedFrame, processedFrame;
-    private IDisplayer displayer;
+    private IDisplayer contourDisplayer, skeletonDisplayer;
 
     private BaseLoaderCallback  mLoaderCallback = new BaseLoaderCallback(this) {
         @Override
@@ -79,8 +82,11 @@ public class MainActivity extends Activity implements CvCameraViewListener2 {
         processedFrame = processor.process(preProcessedFrame);
 
         // Display contours/fill
-        displayer.setFrame(processedFrame);
-        displayer.display();
+        contourDisplayer.setFrame(processedFrame);
+        contourDisplayer.display();
+
+        skeletonDisplayer.setFrame(processedFrame);
+        skeletonDisplayer.display();
 
         // Return processed Mat
         return processedFrame.getRGBA();
@@ -113,11 +119,12 @@ public class MainActivity extends Activity implements CvCameraViewListener2 {
 
     public void onCameraViewStarted(int width, int height) {
         // Create overlay displayer
-        displayer = new ContourDisplayDecorator(new Displayer());
+        contourDisplayer = new ContourDisplayDecorator(new Displayer());
+        skeletonDisplayer = new SkeletonDisplayDecorator(new Displayer());
 
         // New up the camera's frame processors
         preProcessor = new InputFramePreProcessor(new CameraFrameAdapter(new DownSamplingFrameProcessor()));
-        processor = new FrameProcessor(new ColourThresholdFrameProcessor());
+        processor = new FrameProcessor(new ColourThresholdFrameProcessor(), new SkeletonFrameProcessor());
     }
 
     public void onCameraViewStopped() {

@@ -18,4 +18,7 @@ public interface IFrame {
     Mat getDownSampledMat();
     void setDownSampledMat(Mat inputDownSampledMat);
 
+    List<MatOfPoint> getFeatures();
+    void setFeatures(List<MatOfPoint> features);
+
 }

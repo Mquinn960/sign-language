@@ -21,6 +21,9 @@ public class ColourThresholdFrameProcessor implements IFrameProcessor {
     private List<MatOfPoint> tempContours = new ArrayList<>();
     private List<MatOfPoint> outerContours = new ArrayList<>();
 
+    private Scalar lowerBound = new Scalar(0);
+    private Scalar upperBound = new Scalar(0);
+
     private SkinColourProfile skinColourProfile;
 
     private Mat mHsvMat = new Mat();
@@ -37,13 +40,29 @@ public class ColourThresholdFrameProcessor implements IFrameProcessor {
     @Override
     public IFrame process(IFrame inputFrame) {
 
-        tempContours.clear();
+        clearContours();
+
+        // H
+        lowerBound.val[0] = 0;
+        upperBound.val[0] = 25;
+
+        // S
+        lowerBound.val[1] = 40;
+        upperBound.val[1] = 255;
+
+        // V
+        lowerBound.val[2] = 60;
+        upperBound.val[2] = 255;
+
+        // A
+        lowerBound.val[3] = 0;
+        upperBound.val[3] = 255;
 
         // Convert downsampled image to HSV
         Imgproc.cvtColor(inputFrame.getDownSampledMat(), mHsvMat, Imgproc.COLOR_RGB2HSV_FULL);
 
         // Find out if input Mat is within bounds
-        Core.inRange(mHsvMat, skinColourProfile.getLowerBound(), skinColourProfile.getUpperBound(), mMask);
+        Core.inRange(mHsvMat, lowerBound, upperBound, mMask);
 
         // Erode
         Imgproc.erode(mMask, mErodedMask, new Mat());
@@ -56,9 +75,6 @@ public class ColourThresholdFrameProcessor implements IFrameProcessor {
 
         // Get contour
         Imgproc.findContours(mBlurredMask, tempContours, mHierarchy, Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
-
-        // Clear previous outer contours and hull points
-        outerContours.clear();
 
         if (tempContours.size() > 0){
             double maxArea = 0;
@@ -85,6 +101,11 @@ public class ColourThresholdFrameProcessor implements IFrameProcessor {
 
         return inputFrame;
 
+    }
+
+    private void clearContours(){
+        tempContours.clear();
+        outerContours.clear();
     }
 
 }

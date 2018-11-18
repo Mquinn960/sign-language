@@ -6,16 +6,23 @@ public class FrameProcessor implements IFrameProcessor {
 
     private IFrameProcessor colourThresholdFrameProcessor;
     private IFrameProcessor skeletonFrameProcessor;
+    private IFrameProcessor innerContourMaskProcessor;
 
-    public FrameProcessor(IFrameProcessor inputColourThresholdFrameProcessor, IFrameProcessor inputSkeletonFrameProcessor) {
+    public FrameProcessor(IFrameProcessor inputColourThresholdFrameProcessor,
+                          IFrameProcessor inputSkeletonFrameProcessor,
+                          IFrameProcessor inputInnerContourMaskProcessor) {
         colourThresholdFrameProcessor = inputColourThresholdFrameProcessor;
         skeletonFrameProcessor = inputSkeletonFrameProcessor;
+        innerContourMaskProcessor = inputInnerContourMaskProcessor;
     }
 
     @Override
     public IFrame process(IFrame inputFrame) {
 
         inputFrame = colourThresholdFrameProcessor.process(inputFrame);
+
+        inputFrame = innerContourMaskProcessor.process(inputFrame);
+
         inputFrame = skeletonFrameProcessor.process(inputFrame);
 
         return inputFrame;

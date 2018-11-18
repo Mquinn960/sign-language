@@ -28,6 +28,7 @@ import mquinn.sign_language.preprocessing.InputFramePreProcessor;
 import mquinn.sign_language.processing.DownSamplingFrameProcessor;
 import mquinn.sign_language.processing.FrameProcessor;
 import mquinn.sign_language.processing.IFrameProcessor;
+import mquinn.sign_language.processing.InnerContourMaskProcessor;
 import mquinn.sign_language.processing.SkeletonFrameProcessor;
 
 public class MainActivity extends Activity implements CvCameraViewListener2 {
@@ -85,6 +86,7 @@ public class MainActivity extends Activity implements CvCameraViewListener2 {
         contourDisplayer.setFrame(processedFrame);
         contourDisplayer.display();
 
+        // Display interesting features
         skeletonDisplayer.setFrame(processedFrame);
         skeletonDisplayer.display();
 
@@ -124,7 +126,10 @@ public class MainActivity extends Activity implements CvCameraViewListener2 {
 
         // New up the camera's frame processors
         preProcessor = new InputFramePreProcessor(new CameraFrameAdapter(new DownSamplingFrameProcessor()));
-        processor = new FrameProcessor(new ColourThresholdFrameProcessor(), new SkeletonFrameProcessor());
+
+        processor = new FrameProcessor(new ColourThresholdFrameProcessor(),
+                                       new SkeletonFrameProcessor(),
+                                       new InnerContourMaskProcessor());
     }
 
     public void onCameraViewStopped() {

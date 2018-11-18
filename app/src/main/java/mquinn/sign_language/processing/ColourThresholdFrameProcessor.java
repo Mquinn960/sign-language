@@ -91,7 +91,7 @@ public class ColourThresholdFrameProcessor implements IFrameProcessor {
             }
 
             if (Imgproc.contourArea(maxContour) > minContourArea * maxArea) {
-                Core.multiply(maxContour, new Scalar(4, 4), maxContour);
+                //Core.multiply(maxContour, new Scalar(4, 4), maxContour);
                 outerContours.add(maxContour);
             }
 

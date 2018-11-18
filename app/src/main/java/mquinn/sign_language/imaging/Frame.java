@@ -11,6 +11,7 @@ public class Frame extends Mat implements IFrame {
     private List<MatOfPoint> contours;
     private Mat downSampledMat;
     private List<MatOfPoint> features;
+    private Mat maskedImage;
 
     public Frame(Mat inputRGBA) {
         rGBA = inputRGBA;
@@ -54,5 +55,15 @@ public class Frame extends Mat implements IFrame {
     @Override
     public void setFeatures(List<MatOfPoint> inputFeatures) {
         features = inputFeatures;
+    }
+
+    @Override
+    public Mat getMaskedImage() {
+        return maskedImage;
+    }
+
+    @Override
+    public void setMaskedImage(Mat inputMaskedImage) {
+        maskedImage = inputMaskedImage;
     }
 }

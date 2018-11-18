@@ -5,6 +5,6 @@ import mquinn.sign_language.imaging.IFrame;
 
 public interface IFrameProcessor {
 
-    Frame process(IFrame inputFrame);
+    IFrame process(IFrame inputFrame);
 
 }

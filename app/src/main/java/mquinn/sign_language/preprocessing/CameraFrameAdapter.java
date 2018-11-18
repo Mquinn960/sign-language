@@ -1,13 +1,28 @@
 package mquinn.sign_language.preprocessing;
 
 import org.opencv.android.CameraBridgeViewBase.CvCameraViewFrame;
+import org.opencv.imgproc.Imgproc;
 
 import mquinn.sign_language.imaging.Frame;
+import mquinn.sign_language.imaging.IFrame;
+import mquinn.sign_language.processing.IFrameProcessor;
 
 public class CameraFrameAdapter implements IFramePreProcessor {
 
-    @Override
-    public Frame preProcess(CvCameraViewFrame inputFrame) {
-        return new Frame(inputFrame.rgba());
+    private IFrameProcessor downSampler;
+    private IFrame outputFrame;
+
+    public CameraFrameAdapter(IFrameProcessor downSamplerFrameProcessor) {
+        downSampler = downSamplerFrameProcessor;
     }
+
+    @Override
+    public IFrame preProcess(CvCameraViewFrame inputFrame) {
+
+        outputFrame = new Frame(inputFrame.rgba());
+        outputFrame = downSampler.process(outputFrame);
+
+        return outputFrame;
+    }
+
 }

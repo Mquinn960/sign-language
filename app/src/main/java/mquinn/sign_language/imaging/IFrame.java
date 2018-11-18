@@ -15,13 +15,7 @@ public interface IFrame {
     List<MatOfPoint> getContours();
     void setCountours(List<MatOfPoint> contours);
 
-    List<MatOfPoint> getHullPoints();
-    void setHullPoints(List<MatOfPoint> hullPoints);
-
-    List<Integer> getHullDefects();
-    void setHullDefects(List<Integer> hullDefects);
-
-    List<MatOfPoint> getFeatures();
-    void setFeatures(List<MatOfPoint> features);
+    Mat getDownSampledMat();
+    void setDownSampledMat(Mat inputDownSampledMat);
 
 }

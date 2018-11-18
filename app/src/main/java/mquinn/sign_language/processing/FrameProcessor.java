@@ -1,35 +1,30 @@
 package mquinn.sign_language.processing;
 
-import mquinn.sign_language.imaging.Frame;
 import mquinn.sign_language.imaging.IFrame;
 
 public class FrameProcessor implements IFrameProcessor {
 
-    private IPointDetector pointDetector;
+    private IFrameProcessor colourThresholdFrameProcessor;
 
-    public FrameProcessor(IPointDetector inputPointDetector) {
-        pointDetector = inputPointDetector;
+    public FrameProcessor(IFrameProcessor inputColourThresholdFrameProcessor) {
+        colourThresholdFrameProcessor = inputColourThresholdFrameProcessor;
     }
 
     @Override
-    public Frame process(IFrame inputFrame) {
+    public IFrame process(IFrame inputFrame) {
 
-        pointDetector.setFrame(inputFrame);
-        pointDetector.process();
-        inputFrame.setCountours(pointDetector.getContours());
-        inputFrame.setFeatures(pointDetector.getFeatures());
-//        inputFrame.setHullPoints(pointDetector.getHullPoints());
-//        inputFrame.setHullDefects(pointDetector.getHullDefects());
+        inputFrame = colourThresholdFrameProcessor.process(inputFrame);
 
-        return (Frame) inputFrame;
+        return inputFrame;
 
     }
 
-    public IPointDetector getPointDetector() {
-        return pointDetector;
+    public IFrameProcessor getColourThresholdFrameProcessor() {
+        return colourThresholdFrameProcessor;
     }
 
-    public void setPointDetector(IPointDetector pointDetector) {
-        this.pointDetector = pointDetector;
+    public void setColourThresholdFrameProcessor(IFrameProcessor inputColourThresholdFrameProcessor) {
+        this.colourThresholdFrameProcessor = inputColourThresholdFrameProcessor;
     }
+
 }

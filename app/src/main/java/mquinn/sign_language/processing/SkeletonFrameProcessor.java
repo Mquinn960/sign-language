@@ -26,7 +26,7 @@ public class SkeletonFrameProcessor implements IFrameProcessor {
 
         Imgproc.cvtColor(inputFrame.getDownSampledMat(), greyScale, Imgproc.COLOR_RGBA2GRAY);
 
-        Imgproc.goodFeaturesToTrack(greyScale, features, 50, 0.01, 5, inputFrame.getMaskedImage());
+        Imgproc.goodFeaturesToTrack(greyScale, features, 30, 0.01, 10, inputFrame.getMaskedImage());
 
         Core.multiply(features, new Scalar(4, 4), features);
 

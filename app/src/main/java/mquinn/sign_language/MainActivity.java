@@ -22,7 +22,6 @@ import mquinn.sign_language.display.SkeletonDisplayDecorator;
 import mquinn.sign_language.imaging.IFrame;
 import mquinn.sign_language.preprocessing.CameraFrameAdapter;
 import mquinn.sign_language.preprocessing.IFramePreProcessor;
-import mquinn.sign_language.preprocessing.StaticFrameAdapter;
 import mquinn.sign_language.processing.ColourThresholdFrameProcessor;
 import mquinn.sign_language.preprocessing.InputFramePreProcessor;
 import mquinn.sign_language.processing.DownSamplingFrameProcessor;
@@ -47,6 +46,7 @@ public class MainActivity extends Activity implements CvCameraViewListener2 {
                 case LoaderCallbackInterface.SUCCESS:
                 {
                     mOpenCvCameraView.enableView();
+                    mOpenCvCameraView.enableFpsMeter();
                 } break;
                 default:
                 {

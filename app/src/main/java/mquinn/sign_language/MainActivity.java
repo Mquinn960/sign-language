@@ -18,12 +18,19 @@ import android.view.SurfaceView;
 import mquinn.sign_language.display.ContourDisplayDecorator;
 import mquinn.sign_language.display.Displayer;
 import mquinn.sign_language.display.IDisplayer;
+import mquinn.sign_language.display.FeatureDisplayDecorator;
 import mquinn.sign_language.display.SkeletonDisplayDecorator;
 import mquinn.sign_language.imaging.IFrame;
-import mquinn.sign_language.preprocessing.CameraFrameAdapter;
-import mquinn.sign_language.preprocessing.IFramePreProcessor;
+import mquinn.sign_language.processing.FeatureFrameProcessor;
+import mquinn.sign_language.processing.FeatureTarget;
+import mquinn.sign_language.processing.ZhangSuenThinningStrategy;
+import mquinn.sign_language.processing.postprocessing.IFramePostProcessor;
+import mquinn.sign_language.processing.postprocessing.OutputFramePostProcessor;
+import mquinn.sign_language.processing.postprocessing.UpScalingFramePostProcessor;
+import mquinn.sign_language.processing.preprocessing.CameraFrameAdapter;
+import mquinn.sign_language.processing.preprocessing.IFramePreProcessor;
 import mquinn.sign_language.processing.ColourThresholdFrameProcessor;
-import mquinn.sign_language.preprocessing.InputFramePreProcessor;
+import mquinn.sign_language.processing.preprocessing.InputFramePreProcessor;
 import mquinn.sign_language.processing.DownSamplingFrameProcessor;
 import mquinn.sign_language.processing.FrameProcessor;
 import mquinn.sign_language.processing.IFrameProcessor;
@@ -36,8 +43,9 @@ public class MainActivity extends Activity implements CvCameraViewListener2 {
 
     private IFramePreProcessor preProcessor;
     private IFrameProcessor processor;
-    private IFrame preProcessedFrame, processedFrame;
-    private IDisplayer contourDisplayer, skeletonDisplayer;
+    private IFramePostProcessor postProcessor;
+    private IFrame preProcessedFrame, processedFrame, postProcessedFrame;
+    private IDisplayer contourDisplayer, featureDisplayer, skeletonDisplayer;
 
     private BaseLoaderCallback  mLoaderCallback = new BaseLoaderCallback(this) {
         @Override
@@ -76,22 +84,29 @@ public class MainActivity extends Activity implements CvCameraViewListener2 {
 
     public Mat onCameraFrame(CvCameraViewFrame inputFrame) {
 
-        // Generate Frame from input frame
+        // Generate Frame from input frame and downsample
         preProcessedFrame = preProcessor.preProcess(inputFrame);
 
         // Generate useful information from frame
         processedFrame = processor.process(preProcessedFrame);
 
+        // Post processing of processed frame and upsampling
+        postProcessedFrame = postProcessor.postProcess(processedFrame);
+
         // Display contours/fill
-        contourDisplayer.setFrame(processedFrame);
+        contourDisplayer.setFrame(postProcessedFrame);
         contourDisplayer.display();
 
-        // Display interesting features
-        skeletonDisplayer.setFrame(processedFrame);
+        // Display skeleton contours
+        skeletonDisplayer.setFrame(postProcessedFrame);
         skeletonDisplayer.display();
 
+        // Display tracked features
+        featureDisplayer.setFrame(postProcessedFrame);
+        featureDisplayer.display();
+
         // Return processed Mat
-        return processedFrame.getRGBA();
+        return postProcessedFrame.getRGBA();
     }
 
     @Override
@@ -122,14 +137,18 @@ public class MainActivity extends Activity implements CvCameraViewListener2 {
     public void onCameraViewStarted(int width, int height) {
         // Create overlay displayer
         contourDisplayer = new ContourDisplayDecorator(new Displayer());
+        featureDisplayer = new FeatureDisplayDecorator(new Displayer());
         skeletonDisplayer = new SkeletonDisplayDecorator(new Displayer());
 
         // New up the camera's frame processors
         preProcessor = new InputFramePreProcessor(new CameraFrameAdapter(new DownSamplingFrameProcessor()));
 
-        processor = new FrameProcessor(new ColourThresholdFrameProcessor(),
-                                       new SkeletonFrameProcessor(),
-                                       new InnerContourMaskProcessor());
+        processor = new FrameProcessor( new ColourThresholdFrameProcessor(),
+                                        new SkeletonFrameProcessor(new ZhangSuenThinningStrategy()),
+                                        new InnerContourMaskProcessor(),
+                                        new FeatureFrameProcessor(FeatureTarget.CONTOUR_MASK));
+
+        postProcessor = new OutputFramePostProcessor(new UpScalingFramePostProcessor());
     }
 
     public void onCameraViewStopped() {

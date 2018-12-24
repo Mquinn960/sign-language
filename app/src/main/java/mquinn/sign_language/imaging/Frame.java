@@ -12,6 +12,7 @@ public class Frame extends Mat implements IFrame {
     private Mat downSampledMat;
     private List<MatOfPoint> features;
     private Mat maskedImage;
+    private Mat skeleton;
 
     public Frame(Mat inputRGBA) {
         rGBA = inputRGBA;
@@ -55,6 +56,16 @@ public class Frame extends Mat implements IFrame {
     @Override
     public void setFeatures(List<MatOfPoint> inputFeatures) {
         features = inputFeatures;
+    }
+
+    @Override
+    public Mat getSkeleton() {
+        return skeleton;
+    }
+
+    @Override
+    public void setSkeleton(Mat inputSkeleton) {
+        skeleton = inputSkeleton;
     }
 
     @Override

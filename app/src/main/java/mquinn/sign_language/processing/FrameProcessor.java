@@ -7,42 +7,49 @@ public class FrameProcessor implements IFrameProcessor {
     private IFrameProcessor colourThresholdFrameProcessor;
     private IFrameProcessor skeletonFrameProcessor;
     private IFrameProcessor innerContourMaskProcessor;
+    private IFrameProcessor featureFrameProcessor;
+
+    private IFrame outputFrame;
 
     public FrameProcessor(IFrameProcessor inputColourThresholdFrameProcessor,
                           IFrameProcessor inputSkeletonFrameProcessor,
-                          IFrameProcessor inputInnerContourMaskProcessor) {
+                          IFrameProcessor inputInnerContourMaskProcessor,
+                          IFrameProcessor inputFeatureFrameProcessor) {
         colourThresholdFrameProcessor = inputColourThresholdFrameProcessor;
         skeletonFrameProcessor = inputSkeletonFrameProcessor;
         innerContourMaskProcessor = inputInnerContourMaskProcessor;
+        featureFrameProcessor = inputFeatureFrameProcessor;
     }
 
     @Override
     public IFrame process(IFrame inputFrame) {
 
-        inputFrame = colourThresholdFrameProcessor.process(inputFrame);
+        outputFrame = colourThresholdFrameProcessor.process(inputFrame);
 
-        inputFrame = innerContourMaskProcessor.process(inputFrame);
+        outputFrame = innerContourMaskProcessor.process(outputFrame);
 
-        inputFrame = skeletonFrameProcessor.process(inputFrame);
+        outputFrame = featureFrameProcessor.process(outputFrame);
 
-        return inputFrame;
+        outputFrame = skeletonFrameProcessor.process(outputFrame);
 
-    }
+        return outputFrame;
 
-    public IFrameProcessor getColourThresholdFrameProcessor() {
-        return colourThresholdFrameProcessor;
     }
 
     public void setColourThresholdFrameProcessor(IFrameProcessor inputColourThresholdFrameProcessor) {
         this.colourThresholdFrameProcessor = inputColourThresholdFrameProcessor;
     }
 
-    public IFrameProcessor getSkeletonFrameProcessor() {
-        return skeletonFrameProcessor;
-    }
-
     public void setSkeletonFrameProcessor(IFrameProcessor inputSkeletonFrameProcessor) {
         this.skeletonFrameProcessor = inputSkeletonFrameProcessor;
+    }
+
+    public void setFeatureFrameProcessor(IFrameProcessor inputFeatureFrameProcessor) {
+        this.featureFrameProcessor = inputFeatureFrameProcessor;
+    }
+
+    public void setInnerContourMaskProcessor(IFrameProcessor innerContourMaskProcessor) {
+        this.innerContourMaskProcessor = innerContourMaskProcessor;
     }
 
 }

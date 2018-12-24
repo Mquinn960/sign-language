@@ -1,6 +1,7 @@
-package mquinn.sign_language.preprocessing;
+package mquinn.sign_language.processing.preprocessing;
 
 import org.opencv.android.CameraBridgeViewBase.CvCameraViewFrame;
+import org.opencv.core.Mat;
 
 import mquinn.sign_language.imaging.Frame;
 import mquinn.sign_language.imaging.IFrame;

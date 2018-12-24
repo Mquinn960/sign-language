@@ -7,14 +7,14 @@ import org.opencv.imgproc.Imgproc;
 
 import mquinn.sign_language.imaging.IFrame;
 
-public class SkeletonDisplayDecorator extends DisplayDecorator {
+public class FeatureDisplayDecorator extends DisplayDecorator {
 
-    private Scalar skeletonColour;
+    private Scalar featureColour;
     private IFrame frame;
 
-    public SkeletonDisplayDecorator(IDisplayer displayer) {
+    public FeatureDisplayDecorator(IDisplayer displayer) {
         super(displayer);
-        skeletonColour = new Scalar(0,0,255,255);
+        featureColour = new Scalar(255,0,0,255);
     }
 
     @Override
@@ -25,13 +25,11 @@ public class SkeletonDisplayDecorator extends DisplayDecorator {
     @Override
     public void display() {
 
-        // display skeleton
-
-        Imgproc.drawContours(frame.getRGBA(),
-                frame.getSkeleton(),
-                -1,
-                skeletonColour,
-                -1);
+        for (MatOfPoint pointMat: frame.getFeatures()){
+            for (Point point: pointMat.toList()){
+                Imgproc.circle(frame.getRGBA(), point, 5, featureColour, 2);
+            }
+        }
 
     }
 

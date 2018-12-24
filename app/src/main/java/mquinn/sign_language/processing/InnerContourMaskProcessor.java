@@ -32,19 +32,6 @@ public class InnerContourMaskProcessor implements IFrameProcessor {
         // Draw contours onto blank mask
         Imgproc.drawContours(blankMask, inputFrame.getContours(), -1, new Scalar(255), -1);
 
-        // Creating the new background
-        croppedMask = new Mat(greyScale.rows(),greyScale.cols(),CvType.CV_8UC3);
-        croppedMask.setTo(backgroundColour);
-
-        // Copy the inner image to the mask
-        //initialImage.copyTo(croppedMask, blankMask);
-
-        // Normalise
-        //Core.normalize(blankMask.clone(), blankMask, 0.0, 255.0, Core.NORM_MINMAX, CvType.CV_8UC1);
-
-        // Rescale image
-        Core.multiply(croppedMask, new Scalar(4, 4), croppedMask);
-
         // Set masked image on the input frame
         inputFrame.setMaskedImage(blankMask);
 

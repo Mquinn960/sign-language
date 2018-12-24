@@ -21,6 +21,9 @@ public interface IFrame {
     List<MatOfPoint> getFeatures();
     void setFeatures(List<MatOfPoint> features);
 
+    Mat getSkeleton();
+    void setSkeleton(Mat skeleton);
+
     Mat getMaskedImage();
     void setMaskedImage(Mat maskedImage);
 

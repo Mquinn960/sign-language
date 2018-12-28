@@ -24,6 +24,9 @@ public interface IFrame {
     Mat getSkeleton();
     void setSkeleton(Mat skeleton);
 
+    List<MatOfPoint> getSkeletonContours();
+    void setSkeletonContours(List<MatOfPoint> skeletonContours);
+
     Mat getMaskedImage();
     void setMaskedImage(Mat maskedImage);
 

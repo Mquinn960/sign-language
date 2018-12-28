@@ -13,6 +13,7 @@ public class Frame extends Mat implements IFrame {
     private List<MatOfPoint> features;
     private Mat maskedImage;
     private Mat skeleton;
+    private List<MatOfPoint> skeletonContours;
 
     public Frame(Mat inputRGBA) {
         rGBA = inputRGBA;
@@ -66,6 +67,16 @@ public class Frame extends Mat implements IFrame {
     @Override
     public void setSkeleton(Mat inputSkeleton) {
         skeleton = inputSkeleton;
+    }
+
+    @Override
+    public List<MatOfPoint> getSkeletonContours() {
+        return skeletonContours;
+    }
+
+    @Override
+    public void setSkeletonContours(List<MatOfPoint> inputSkeletonContours) {
+        skeletonContours = inputSkeletonContours;
     }
 
     @Override

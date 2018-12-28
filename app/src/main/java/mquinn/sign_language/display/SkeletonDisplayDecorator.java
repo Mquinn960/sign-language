@@ -1,7 +1,5 @@
 package mquinn.sign_language.display;
 
-import org.opencv.core.MatOfPoint;
-import org.opencv.core.Point;
 import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 
@@ -26,9 +24,8 @@ public class SkeletonDisplayDecorator extends DisplayDecorator {
     public void display() {
 
         // display skeleton
-
         Imgproc.drawContours(frame.getRGBA(),
-                frame.getSkeleton(),
+                frame.getSkeletonContours(),
                 -1,
                 skeletonColour,
                 -1);

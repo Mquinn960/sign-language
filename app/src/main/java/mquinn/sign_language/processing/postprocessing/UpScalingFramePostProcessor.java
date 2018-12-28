@@ -25,18 +25,21 @@ public class UpScalingFramePostProcessor implements IFramePostProcessor {
 
         iterativeUpScale(inputFrame.getContours());
         iterativeUpScale(inputFrame.getFeatures());
+        iterativeUpScale(inputFrame.getSkeletonContours());
 
         return inputFrame;
     }
 
-    private void iterativeUpScale(List<MatOfPoint> listOfMatOfPoint){
-        if (listOfMatOfPoint.size() > 0){
-            Iterator<MatOfPoint> allMatOfPoint = listOfMatOfPoint.iterator();
+    private void iterativeUpScale(List<MatOfPoint> pointsToUpScale){
+        if (pointsToUpScale != null){
+            if (pointsToUpScale.size() > 0){
+                Iterator<MatOfPoint> allMatOfPoint = pointsToUpScale.iterator();
 
-            while (allMatOfPoint.hasNext()) {
-                upScaleMatOfPoint(allMatOfPoint.next());
+                while (allMatOfPoint.hasNext()) {
+                    upScaleMatOfPoint(allMatOfPoint.next());
+                }
+
             }
-
         }
     }
 

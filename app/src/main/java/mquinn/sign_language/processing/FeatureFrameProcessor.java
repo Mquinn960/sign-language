@@ -5,6 +5,7 @@ import org.opencv.core.MatOfPoint;
 import org.opencv.imgproc.Imgproc;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import mquinn.sign_language.imaging.IFrame;
@@ -17,6 +18,8 @@ public class FeatureFrameProcessor implements IFrameProcessor {
     private Mat featureInput = new Mat();
     private FeatureTarget featureTarget;
 
+    private MatOfPoint current = new MatOfPoint();
+
     public FeatureFrameProcessor(FeatureTarget inputFeatureTarget) {
         featureTarget = inputFeatureTarget;
     }
@@ -26,24 +29,30 @@ public class FeatureFrameProcessor implements IFrameProcessor {
 
         featureList.clear();
 
-        Imgproc.cvtColor(inputFrame.getDownSampledMat(), greyScale, Imgproc.COLOR_RGBA2GRAY);
-
         switch (featureTarget){
             case SKELETON:
+
                 featureInput = inputFrame.getSkeleton();
+                Imgproc.goodFeaturesToTrack(featureInput, features, 30, 0.01, 10);
+
+                break;
             case CONTOUR_MASK:
+
                 featureInput = inputFrame.getMaskedImage();
+                Imgproc.cvtColor(inputFrame.getDownSampledMat(), greyScale, Imgproc.COLOR_RGBA2GRAY);
+                Imgproc.goodFeaturesToTrack(greyScale, features, 30, 0.01, 10, featureInput,3,3);
+
+                break;
             case CONTOUR_OUTLINE:
                 //TODO: outline method
                 // featureInput = inputFrame.getOutline();
+                break;
             default:
-                featureInput = inputFrame.getSkeleton();
+                featureInput = inputFrame.getMaskedImage();
+                break;
         }
 
-        Imgproc.goodFeaturesToTrack(greyScale, features, 30, 0.01, 10, featureInput);
-
         featureList.add(features);
-
         inputFrame.setFeatures(featureList);
 
         return inputFrame;

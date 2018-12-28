@@ -30,7 +30,7 @@ public class InnerContourMaskProcessor implements IFrameProcessor {
         blankMask = Mat.zeros(greyScale.rows(), greyScale.cols(), CvType.CV_8UC1);
 
         // Draw contours onto blank mask
-        Imgproc.drawContours(blankMask, inputFrame.getContours(), -1, new Scalar(255), -1);
+        Imgproc.drawContours(blankMask, inputFrame.getContours(), -1, new Scalar(255,255,255,255), -1);
 
         // Set masked image on the input frame
         inputFrame.setMaskedImage(blankMask);

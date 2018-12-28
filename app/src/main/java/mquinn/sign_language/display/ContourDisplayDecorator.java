@@ -1,6 +1,5 @@
 package mquinn.sign_language.display;
 
-import org.opencv.core.Point;
 import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 

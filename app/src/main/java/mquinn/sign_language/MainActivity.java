@@ -146,7 +146,7 @@ public class MainActivity extends Activity implements CvCameraViewListener2 {
         processor = new FrameProcessor( new ColourThresholdFrameProcessor(),
                                         new SkeletonFrameProcessor(new ZhangSuenThinningStrategy()),
                                         new InnerContourMaskProcessor(),
-                                        new FeatureFrameProcessor(FeatureTarget.CONTOUR_MASK));
+                                        new FeatureFrameProcessor(FeatureTarget.SKELETON));
 
         postProcessor = new OutputFramePostProcessor(new UpScalingFramePostProcessor());
     }

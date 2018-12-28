@@ -28,9 +28,9 @@ public class FrameProcessor implements IFrameProcessor {
 
         outputFrame = innerContourMaskProcessor.process(outputFrame);
 
-        outputFrame = featureFrameProcessor.process(outputFrame);
-
         outputFrame = skeletonFrameProcessor.process(outputFrame);
+
+        outputFrame = featureFrameProcessor.process(outputFrame);
 
         return outputFrame;
 

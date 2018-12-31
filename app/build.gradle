@@ -3,7 +3,7 @@ apply plugin: 'com.android.application'
 android {
     compileSdkVersion 28
     defaultConfig {
-        applicationId "mquinn.sign_language"
+        applicationId "mquinn.sign_language_recog"
         minSdkVersion 16
         versionCode 1
         versionName "1.0"

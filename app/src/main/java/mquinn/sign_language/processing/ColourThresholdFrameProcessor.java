@@ -16,7 +16,7 @@ import mquinn.sign_language.imaging.SkinColourProfile;
 
 public class ColourThresholdFrameProcessor implements IFrameProcessor {
 
-    private static double minContourArea = 0.1;
+    private static double minContourArea = 100;
 
     private List<MatOfPoint> tempContours = new ArrayList<>();
     private List<MatOfPoint> outerContours = new ArrayList<>();
@@ -44,7 +44,7 @@ public class ColourThresholdFrameProcessor implements IFrameProcessor {
 
         // H
         lowerBound.val[0] = 0;
-        upperBound.val[0] = 25;
+        upperBound.val[0] = 30;
 
         // S
         lowerBound.val[1] = 40;

@@ -13,9 +13,7 @@ import mquinn.sign_language.imaging.IFrame;
 
 public class CannyEdgeFrameProcessor implements IFrameProcessor {
 
-    private Mat inputMask = new Mat();
     private Mat croppedMask = new Mat();
-    private Mat otsuThreshold = new Mat();
     private Mat cannyEdgeMask = new Mat();
     private Mat hierarchy = new Mat();
     private List<MatOfPoint> cannyEdges = new ArrayList<>();
@@ -25,12 +23,14 @@ public class CannyEdgeFrameProcessor implements IFrameProcessor {
 
         cannyEdges.clear();
 
-        inputMask = inputFrame.getMaskedImage();
         croppedMask = inputFrame.getWindowMask();
 
         Imgproc.GaussianBlur(croppedMask, croppedMask, new Size(1,1), 0);
-
         Imgproc.Canny(croppedMask, cannyEdgeMask, 100, 200);
+
+        // Auto Otsu threshold
+//        double otsuThreshValue = Imgproc.threshold(croppedMask, otsuThreshold, 0, 255, Imgproc.THRESH_BINARY | Imgproc.THRESH_OTSU);
+//        Imgproc.Canny(croppedMask, cannyEdgeMask, otsuThreshValue * 0.3, otsuThreshValue);
 
         Imgproc.findContours(cannyEdgeMask,
                 cannyEdges,

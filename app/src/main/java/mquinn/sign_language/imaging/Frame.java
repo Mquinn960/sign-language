@@ -7,17 +7,38 @@ import java.util.List;
 
 public class Frame extends Mat implements IFrame {
 
+    // Input camera mat RGBA values
     private Mat rGBA;
+
+    // Skin mask found by threshold contouring
     private List<MatOfPoint> contours;
-    private Mat downSampledMat;
-    private List<MatOfPoint> features;
-    private Mat maskedImage;
-    private Mat windowMask;
-    private Mat skeleton;
-    private List<MatOfPoint> skeletonContours;
-    private Mat cannyEdgeMask;
-    private List<MatOfPoint> cannyEdges;
+
+    // Hierarchy of founf contours
     private Mat hierarchy;
+
+    // Downsampled starting mat
+    private Mat downSampledMat;
+
+    // Features found by feature extraction
+    private List<MatOfPoint> features;
+
+    // Area of hand with no inner details
+    private Mat maskedImage;
+
+    // Inner hand image with details
+    private Mat windowMask;
+
+    // Drawn mat of skeleton contours
+    private Mat skeleton;
+
+    // List of skeleton contour vectors
+    private List<MatOfPoint> skeletonContours;
+
+    // Drawn mat of canny edges
+    private Mat cannyEdgeMask;
+
+    // List of canny edge contour vectors
+    private List<MatOfPoint> cannyEdges;
 
     public Frame(Mat inputRGBA) {
         rGBA = inputRGBA;

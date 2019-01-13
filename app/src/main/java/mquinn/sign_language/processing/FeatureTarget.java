@@ -4,6 +4,7 @@ public enum FeatureTarget {
 
     SKELETON,
     CONTOUR_MASK,
-    CONTOUR_OUTLINE
+    CONTOUR_OUTLINE,
+    CANNY_EDGES
 
 }

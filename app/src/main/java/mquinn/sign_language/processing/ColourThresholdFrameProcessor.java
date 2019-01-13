@@ -16,7 +16,7 @@ import mquinn.sign_language.imaging.SkinColourProfile;
 
 public class ColourThresholdFrameProcessor implements IFrameProcessor {
 
-    private static double minContourArea = 100;
+    private static double minContourArea = 0.1;
 
     private List<MatOfPoint> tempContours = new ArrayList<>();
     private List<MatOfPoint> outerContours = new ArrayList<>();
@@ -44,7 +44,7 @@ public class ColourThresholdFrameProcessor implements IFrameProcessor {
 
         // H
         lowerBound.val[0] = 0;
-        upperBound.val[0] = 30;
+        upperBound.val[0] = 25;
 
         // S
         lowerBound.val[1] = 40;
@@ -74,7 +74,8 @@ public class ColourThresholdFrameProcessor implements IFrameProcessor {
         Imgproc.GaussianBlur(mDilatedMask, mBlurredMask, new Size(1,1),0);
 
         // Get contour
-        Imgproc.findContours(mBlurredMask, tempContours, mHierarchy, Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
+//        Imgproc.findContours(mBlurredMask, tempContours, mHierarchy, Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
+        Imgproc.findContours(mBlurredMask, tempContours, mHierarchy, Imgproc.RETR_CCOMP, Imgproc.CHAIN_APPROX_SIMPLE);
 
         if (tempContours.size() > 0){
             double maxArea = 0;
@@ -94,7 +95,9 @@ public class ColourThresholdFrameProcessor implements IFrameProcessor {
                 outerContours.add(maxContour);
             }
 
-            inputFrame.setCountours(outerContours);
+//            inputFrame.setCountours(outerContours);
+            inputFrame.setCountours(tempContours);
+            inputFrame.setHierarchy(mHierarchy);
 
         }
 

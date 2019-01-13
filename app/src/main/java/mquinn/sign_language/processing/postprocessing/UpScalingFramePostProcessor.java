@@ -26,6 +26,7 @@ public class UpScalingFramePostProcessor implements IFramePostProcessor {
         iterativeUpScale(inputFrame.getContours());
         iterativeUpScale(inputFrame.getFeatures());
         iterativeUpScale(inputFrame.getSkeletonContours());
+        iterativeUpScale(inputFrame.getCannyEdges());
 
         return inputFrame;
     }

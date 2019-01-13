@@ -22,11 +22,17 @@ public class ContourDisplayDecorator extends DisplayDecorator {
 
     @Override
     public void display() {
+//        Imgproc.drawContours(frame.getRGBA(),
+//                             frame.getContours(),
+//                             -1,
+//                             contourColour,
+//                             -1);
+
         Imgproc.drawContours(frame.getRGBA(),
-                             frame.getContours(),
-                             -1,
-                             contourColour,
-                             -1);
+                frame.getContours(),
+                0,
+                contourColour,
+                -1);
 
     }
 

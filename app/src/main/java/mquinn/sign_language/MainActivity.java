@@ -15,12 +15,15 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.view.SurfaceView;
 
+import mquinn.sign_language.display.CannyEdgesDisplayDecorator;
 import mquinn.sign_language.display.ContourDisplayDecorator;
 import mquinn.sign_language.display.Displayer;
 import mquinn.sign_language.display.IDisplayer;
 import mquinn.sign_language.display.FeatureDisplayDecorator;
 import mquinn.sign_language.display.SkeletonDisplayDecorator;
+import mquinn.sign_language.imaging.Frame;
 import mquinn.sign_language.imaging.IFrame;
+import mquinn.sign_language.processing.CannyEdgeFrameProcessor;
 import mquinn.sign_language.processing.FeatureFrameProcessor;
 import mquinn.sign_language.processing.FeatureTarget;
 import mquinn.sign_language.processing.ZhangSuenThinningStrategy;
@@ -45,7 +48,7 @@ public class MainActivity extends Activity implements CvCameraViewListener2 {
     private IFrameProcessor processor;
     private IFramePostProcessor postProcessor;
     private IFrame preProcessedFrame, processedFrame, postProcessedFrame;
-    private IDisplayer contourDisplayer, featureDisplayer, skeletonDisplayer;
+    private IDisplayer contourDisplayer, featureDisplayer, skeletonDisplayer, cannyEdgesDisplayer;
 
     private BaseLoaderCallback  mLoaderCallback = new BaseLoaderCallback(this) {
         @Override
@@ -97,9 +100,13 @@ public class MainActivity extends Activity implements CvCameraViewListener2 {
         contourDisplayer.setFrame(postProcessedFrame);
         contourDisplayer.display();
 
-        // Display skeleton contours
-        skeletonDisplayer.setFrame(postProcessedFrame);
-        skeletonDisplayer.display();
+//        // Display skeleton contours
+//        skeletonDisplayer.setFrame(postProcessedFrame);
+//        skeletonDisplayer.display();
+
+        // Display canny edge contours
+        cannyEdgesDisplayer.setFrame(postProcessedFrame);
+        cannyEdgesDisplayer.display();
 
         // Display tracked features
         featureDisplayer.setFrame(postProcessedFrame);
@@ -139,6 +146,7 @@ public class MainActivity extends Activity implements CvCameraViewListener2 {
         contourDisplayer = new ContourDisplayDecorator(new Displayer());
         featureDisplayer = new FeatureDisplayDecorator(new Displayer());
         skeletonDisplayer = new SkeletonDisplayDecorator(new Displayer());
+        cannyEdgesDisplayer = new CannyEdgesDisplayDecorator(new Displayer());
 
         // New up the camera's frame processors
         preProcessor = new InputFramePreProcessor(new CameraFrameAdapter(new DownSamplingFrameProcessor()));
@@ -146,7 +154,9 @@ public class MainActivity extends Activity implements CvCameraViewListener2 {
         processor = new FrameProcessor( new ColourThresholdFrameProcessor(),
                                         new SkeletonFrameProcessor(new ZhangSuenThinningStrategy()),
                                         new InnerContourMaskProcessor(),
-                                        new FeatureFrameProcessor(FeatureTarget.SKELETON));
+                                        new CannyEdgeFrameProcessor(),
+                                        new FeatureFrameProcessor(FeatureTarget.CANNY_EDGES)
+                                        );
 
         postProcessor = new OutputFramePostProcessor(new UpScalingFramePostProcessor());
     }

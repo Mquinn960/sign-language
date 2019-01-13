@@ -19,6 +19,8 @@ public class InnerContourMaskProcessor implements IFrameProcessor {
     @Override
     public IFrame process(IFrame inputFrame) {
 
+        croppedMask = new Mat();
+
         // Set initial image
         initialImage = inputFrame.getDownSampledMat();
 
@@ -30,6 +32,11 @@ public class InnerContourMaskProcessor implements IFrameProcessor {
 
         // Draw contours onto blank mask
         Imgproc.drawContours(blankMask, inputFrame.getContours(), -1, new Scalar(255,255,255,255), -1);
+
+        greyScale.copyTo(croppedMask, blankMask);
+
+        // Copy full image details within contoured window
+        inputFrame.setWindowMask(croppedMask);
 
         // Set masked image on the input frame
         inputFrame.setMaskedImage(blankMask);

@@ -24,10 +24,22 @@ public interface IFrame {
     Mat getSkeleton();
     void setSkeleton(Mat skeleton);
 
+    List<MatOfPoint> getCannyEdges();
+    void setCannyEdges(List<MatOfPoint> cannyEdges);
+
+    Mat getCannyEdgeMask();
+    void setCannyEdgeMask(Mat cannyEdgeMask);
+
     List<MatOfPoint> getSkeletonContours();
     void setSkeletonContours(List<MatOfPoint> skeletonContours);
 
     Mat getMaskedImage();
     void setMaskedImage(Mat maskedImage);
+
+    Mat getHierarchy();
+    void setHierarchy(Mat hierarchy);
+
+    Mat getWindowMask();
+    void setWindowMask(Mat maskedImage);
 
 }

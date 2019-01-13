@@ -47,6 +47,12 @@ public class FeatureFrameProcessor implements IFrameProcessor {
                 //TODO: outline method
                 // featureInput = inputFrame.getOutline();
                 break;
+            case CANNY_EDGES:
+
+                featureInput = inputFrame.getCannyEdgeMask();
+                Imgproc.goodFeaturesToTrack(featureInput, features, 30, 0.01, 10);
+
+                break;
             default:
                 featureInput = inputFrame.getMaskedImage();
                 break;

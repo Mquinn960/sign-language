@@ -4,20 +4,23 @@ import mquinn.sign_language.imaging.IFrame;
 
 public class FrameProcessor implements IFrameProcessor {
 
-    private IFrameProcessor colourThresholdFrameProcessor;
-    private IFrameProcessor skeletonFrameProcessor;
-    private IFrameProcessor innerContourMaskProcessor;
-    private IFrameProcessor featureFrameProcessor;
+    private IFrameProcessor colourThresholdFrameProcessor,
+                            skeletonFrameProcessor,
+                            innerContourMaskProcessor,
+                            featureFrameProcessor,
+                            cannyEdgeFrameProcessor;
 
     private IFrame outputFrame;
 
     public FrameProcessor(IFrameProcessor inputColourThresholdFrameProcessor,
                           IFrameProcessor inputSkeletonFrameProcessor,
                           IFrameProcessor inputInnerContourMaskProcessor,
+                          IFrameProcessor inputCannyEdgeFrameProcessor,
                           IFrameProcessor inputFeatureFrameProcessor) {
         colourThresholdFrameProcessor = inputColourThresholdFrameProcessor;
         skeletonFrameProcessor = inputSkeletonFrameProcessor;
         innerContourMaskProcessor = inputInnerContourMaskProcessor;
+        cannyEdgeFrameProcessor = inputCannyEdgeFrameProcessor;
         featureFrameProcessor = inputFeatureFrameProcessor;
     }
 
@@ -29,6 +32,8 @@ public class FrameProcessor implements IFrameProcessor {
         outputFrame = innerContourMaskProcessor.process(outputFrame);
 
         outputFrame = skeletonFrameProcessor.process(outputFrame);
+
+        outputFrame = cannyEdgeFrameProcessor.process(outputFrame);
 
         outputFrame = featureFrameProcessor.process(outputFrame);
 
@@ -46,6 +51,10 @@ public class FrameProcessor implements IFrameProcessor {
 
     public void setFeatureFrameProcessor(IFrameProcessor inputFeatureFrameProcessor) {
         this.featureFrameProcessor = inputFeatureFrameProcessor;
+    }
+
+    public void setCannyEdgeFrameProcessor(IFrameProcessor inputCannyEdgeFrameProcessor) {
+        this.cannyEdgeFrameProcessor = inputCannyEdgeFrameProcessor;
     }
 
     public void setInnerContourMaskProcessor(IFrameProcessor innerContourMaskProcessor) {

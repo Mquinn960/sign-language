@@ -33,7 +33,7 @@ public class SkeletonFrameProcessor implements IFrameProcessor {
         Imgproc.findContours(skeletonMask,
                 skeletonContours,
                 hierarchy,
-                Imgproc.RETR_EXTERNAL,
+                Imgproc.RETR_CCOMP,
                 Imgproc.CHAIN_APPROX_SIMPLE);
 
         inputFrame.setSkeleton(skeletonMask);

@@ -12,8 +12,12 @@ public class Frame extends Mat implements IFrame {
     private Mat downSampledMat;
     private List<MatOfPoint> features;
     private Mat maskedImage;
+    private Mat windowMask;
     private Mat skeleton;
     private List<MatOfPoint> skeletonContours;
+    private Mat cannyEdgeMask;
+    private List<MatOfPoint> cannyEdges;
+    private Mat hierarchy;
 
     public Frame(Mat inputRGBA) {
         rGBA = inputRGBA;
@@ -27,6 +31,26 @@ public class Frame extends Mat implements IFrame {
     @Override
     public List<MatOfPoint> getContours() {
         return contours;
+    }
+
+    @Override
+    public List<MatOfPoint> getCannyEdges() {
+        return cannyEdges;
+    }
+
+    @Override
+    public void setCannyEdges(List<MatOfPoint> inputCannyEdges) {
+        cannyEdges = inputCannyEdges;
+    }
+
+    @Override
+    public Mat getCannyEdgeMask() {
+        return cannyEdgeMask;
+    }
+
+    @Override
+    public void setCannyEdgeMask(Mat inputCannyEdgeMask) {
+        cannyEdgeMask = inputCannyEdgeMask;
     }
 
     @Override
@@ -85,7 +109,27 @@ public class Frame extends Mat implements IFrame {
     }
 
     @Override
+    public Mat getWindowMask() {
+        return windowMask;
+    }
+
+    @Override
+    public void setWindowMask(Mat inputWindowMask) {
+        windowMask = inputWindowMask;
+    }
+
+    @Override
     public void setMaskedImage(Mat inputMaskedImage) {
         maskedImage = inputMaskedImage;
+    }
+
+    @Override
+    public Mat getHierarchy() {
+        return hierarchy;
+    }
+
+    @Override
+    public void setHierarchy(Mat hierarchy) {
+        this.hierarchy = hierarchy;
     }
 }

@@ -6,8 +6,8 @@ public class SkinColourProfile {
 
     private static SkinColourProfile instance = null;
 
-    private Scalar lowerBound = new Scalar(0);
-    private Scalar upperBound = new Scalar(0);
+    public Scalar lowerBound = new Scalar(0);
+    public Scalar upperBound = new Scalar(0);
 
     protected SkinColourProfile() {
         setDefaultSkinColourProfile();
@@ -37,15 +37,6 @@ public class SkinColourProfile {
                 upperBound.val[HSVA.A.getScalarPosition()] = upper;
         }
 
-    }
-
-
-    public Scalar getLowerBound(){
-        return upperBound;
-    }
-
-    public Scalar getUpperBound(){
-        return lowerBound;
     }
 
     public void setLowerBound(Scalar lowerBound) {

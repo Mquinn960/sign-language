@@ -1,54 +1,45 @@
 package mquinn.sign_language;
 
+import android.app.Activity;
+import android.os.Bundle;
+import android.view.SurfaceView;
+import android.view.Window;
+import android.view.WindowManager;
+
 import org.opencv.android.BaseLoaderCallback;
+import org.opencv.android.CameraBridgeViewBase;
 import org.opencv.android.CameraBridgeViewBase.CvCameraViewFrame;
+import org.opencv.android.CameraBridgeViewBase.CvCameraViewListener2;
 import org.opencv.android.LoaderCallbackInterface;
 import org.opencv.android.OpenCVLoader;
 import org.opencv.core.Mat;
-import org.opencv.android.CameraBridgeViewBase;
-import org.opencv.android.CameraBridgeViewBase.CvCameraViewListener2;
 
-import android.app.Activity;
-import android.os.Bundle;
-
-import android.view.Window;
-import android.view.WindowManager;
-import android.view.SurfaceView;
-
-import mquinn.sign_language.display.CannyEdgesDisplayDecorator;
-import mquinn.sign_language.display.ContourDisplayDecorator;
-import mquinn.sign_language.display.Displayer;
-import mquinn.sign_language.display.IDisplayer;
-import mquinn.sign_language.display.FeatureDisplayDecorator;
-import mquinn.sign_language.display.SkeletonDisplayDecorator;
-import mquinn.sign_language.imaging.Frame;
 import mquinn.sign_language.imaging.IFrame;
-import mquinn.sign_language.processing.CannyEdgeFrameProcessor;
-import mquinn.sign_language.processing.FeatureFrameProcessor;
-import mquinn.sign_language.processing.FeatureTarget;
-import mquinn.sign_language.processing.ZhangSuenThinningStrategy;
+import mquinn.sign_language.processing.DetectionMethod;
+import mquinn.sign_language.processing.DownSamplingFrameProcessor;
+import mquinn.sign_language.processing.IFrameProcessor;
+import mquinn.sign_language.processing.MainFrameProcessor;
 import mquinn.sign_language.processing.postprocessing.IFramePostProcessor;
 import mquinn.sign_language.processing.postprocessing.OutputFramePostProcessor;
 import mquinn.sign_language.processing.postprocessing.UpScalingFramePostProcessor;
 import mquinn.sign_language.processing.preprocessing.CameraFrameAdapter;
 import mquinn.sign_language.processing.preprocessing.IFramePreProcessor;
-import mquinn.sign_language.processing.ColourThresholdFrameProcessor;
 import mquinn.sign_language.processing.preprocessing.InputFramePreProcessor;
-import mquinn.sign_language.processing.DownSamplingFrameProcessor;
-import mquinn.sign_language.processing.FrameProcessor;
-import mquinn.sign_language.processing.IFrameProcessor;
-import mquinn.sign_language.processing.InnerContourMaskProcessor;
-import mquinn.sign_language.processing.SkeletonFrameProcessor;
+import mquinn.sign_language.rendering.IRenderer;
+import mquinn.sign_language.rendering.MainRenderer;
 
 public class MainActivity extends Activity implements CvCameraViewListener2 {
 
     private CameraBridgeViewBase mOpenCvCameraView;
 
     private IFramePreProcessor preProcessor;
-    private IFrameProcessor processor;
     private IFramePostProcessor postProcessor;
     private IFrame preProcessedFrame, processedFrame, postProcessedFrame;
-    private IDisplayer contourDisplayer, featureDisplayer, skeletonDisplayer, cannyEdgesDisplayer;
+
+    private IFrameProcessor mainFrameProcessor;
+    private IRenderer mainDisplayer;
+
+    private DetectionMethod detectionMethod;
 
     private BaseLoaderCallback  mLoaderCallback = new BaseLoaderCallback(this) {
         @Override
@@ -91,26 +82,13 @@ public class MainActivity extends Activity implements CvCameraViewListener2 {
         preProcessedFrame = preProcessor.preProcess(inputFrame);
 
         // Generate useful information from frame
-        processedFrame = processor.process(preProcessedFrame);
+        processedFrame = mainFrameProcessor.process(preProcessedFrame);
 
         // Post processing of processed frame and upsampling
         postProcessedFrame = postProcessor.postProcess(processedFrame);
 
-        // Display contours/fill
-        contourDisplayer.setFrame(postProcessedFrame);
-        contourDisplayer.display();
-
-//        // Display skeleton contours
-//        skeletonDisplayer.setFrame(postProcessedFrame);
-//        skeletonDisplayer.display();
-
-        // Display canny edge contours
-        cannyEdgesDisplayer.setFrame(postProcessedFrame);
-        cannyEdgesDisplayer.display();
-
-        // Display tracked features
-        featureDisplayer.setFrame(postProcessedFrame);
-        featureDisplayer.display();
+        // Display anything required
+        mainDisplayer.display(postProcessedFrame);
 
         // Return processed Mat
         return postProcessedFrame.getRGBA();
@@ -142,23 +120,22 @@ public class MainActivity extends Activity implements CvCameraViewListener2 {
     }
 
     public void onCameraViewStarted(int width, int height) {
-        // Create overlay displayer
-        contourDisplayer = new ContourDisplayDecorator(new Displayer());
-        featureDisplayer = new FeatureDisplayDecorator(new Displayer());
-        skeletonDisplayer = new SkeletonDisplayDecorator(new Displayer());
-        cannyEdgesDisplayer = new CannyEdgesDisplayDecorator(new Displayer());
 
-        // New up the camera's frame processors
+        // Set detection method
+        detectionMethod = DetectionMethod.SKELETON;
+
+        // Create Displayers
+        mainDisplayer = new MainRenderer(detectionMethod);
+
+        // Pre processors
         preProcessor = new InputFramePreProcessor(new CameraFrameAdapter(new DownSamplingFrameProcessor()));
 
-        processor = new FrameProcessor( new ColourThresholdFrameProcessor(),
-                                        new SkeletonFrameProcessor(new ZhangSuenThinningStrategy()),
-                                        new InnerContourMaskProcessor(),
-                                        new CannyEdgeFrameProcessor(),
-                                        new FeatureFrameProcessor(FeatureTarget.CANNY_EDGES)
-                                        );
+        // Frame Processors
+        mainFrameProcessor = new MainFrameProcessor(detectionMethod);
 
+        // Post processors
         postProcessor = new OutputFramePostProcessor(new UpScalingFramePostProcessor());
+
     }
 
     public void onCameraViewStopped() {

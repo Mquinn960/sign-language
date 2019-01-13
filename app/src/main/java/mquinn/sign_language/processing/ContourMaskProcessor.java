@@ -7,7 +7,7 @@ import org.opencv.imgproc.Imgproc;
 
 import mquinn.sign_language.imaging.IFrame;
 
-public class InnerContourMaskProcessor implements IFrameProcessor {
+public class ContourMaskProcessor implements IFrameProcessor {
 
     private Mat greyScale =  new Mat();
     private Mat blankMask =  new Mat();
@@ -33,6 +33,7 @@ public class InnerContourMaskProcessor implements IFrameProcessor {
         // Draw contours onto blank mask
         Imgproc.drawContours(blankMask, inputFrame.getContours(), -1, new Scalar(255,255,255,255), -1);
 
+        // Copy greyscale masked window of the actual hand
         greyScale.copyTo(croppedMask, blankMask);
 
         // Copy full image details within contoured window

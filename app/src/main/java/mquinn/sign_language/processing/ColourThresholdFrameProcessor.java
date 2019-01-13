@@ -21,6 +21,7 @@ public class ColourThresholdFrameProcessor implements IFrameProcessor {
     private List<MatOfPoint> outerContours = new ArrayList<>();
 
     private SkinColourProfile skinColourProfile;
+    private DetectionMethod detectionMethod;
 
     private Mat mHsvMat = new Mat();
     private Mat mMask = new Mat();
@@ -29,8 +30,9 @@ public class ColourThresholdFrameProcessor implements IFrameProcessor {
     private Mat mErodedMask = new Mat();
     private Mat mBlurredMask = new Mat();
 
-    public ColourThresholdFrameProcessor(){
+    public ColourThresholdFrameProcessor(DetectionMethod inputDetectionMethod){
         skinColourProfile = SkinColourProfile.getInstance();
+        detectionMethod = inputDetectionMethod;
     }
 
     @Override
@@ -42,7 +44,7 @@ public class ColourThresholdFrameProcessor implements IFrameProcessor {
         Imgproc.cvtColor(inputFrame.getDownSampledMat(), mHsvMat, Imgproc.COLOR_RGB2HSV_FULL);
 
         // Find out if input Mat is within bounds
-        Core.inRange(mHsvMat, skinColourProfile.getLowerBound(), skinColourProfile.getUpperBound(), mMask);
+        Core.inRange(mHsvMat, skinColourProfile.lowerBound, skinColourProfile.upperBound, mMask);
 
         // Erode
         Imgproc.erode(mMask, mErodedMask, new Mat());
@@ -53,9 +55,7 @@ public class ColourThresholdFrameProcessor implements IFrameProcessor {
         // Gauss Blur
         Imgproc.GaussianBlur(mDilatedMask, mBlurredMask, new Size(1,1),0);
 
-        // Get contour
-//        Imgproc.findContours(mBlurredMask, tempContours, mHierarchy, Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
-        Imgproc.findContours(mBlurredMask, tempContours, mHierarchy, Imgproc.RETR_CCOMP, Imgproc.CHAIN_APPROX_SIMPLE);
+        Imgproc.findContours(mBlurredMask, tempContours, mHierarchy, Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
 
         if (tempContours.size() > 0){
             double maxArea = 0;
@@ -75,10 +75,8 @@ public class ColourThresholdFrameProcessor implements IFrameProcessor {
                 outerContours.add(maxContour);
             }
 
-//            inputFrame.setCountours(outerContours);
-            inputFrame.setCountours(tempContours);
+            inputFrame.setCountours(outerContours);
             inputFrame.setHierarchy(mHierarchy);
-
         }
 
         return inputFrame;

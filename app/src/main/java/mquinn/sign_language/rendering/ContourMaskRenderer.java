@@ -1,39 +1,37 @@
-package mquinn.sign_language.display;
+package mquinn.sign_language.rendering;
 
 import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 
 import mquinn.sign_language.imaging.IFrame;
 
-public class ContourDisplayDecorator extends DisplayDecorator {
+public class ContourMaskRenderer implements IRenderer {
 
     private Scalar contourColour;
-    private IFrame frame;
 
-    public ContourDisplayDecorator(IDisplayer displayer) {
-        super(displayer);
-        contourColour = new Scalar(0,255,0,255);
+    public ContourMaskRenderer() {
+        setDefaultColour();
     }
 
     @Override
-    public void setFrame(IFrame inputFrame) {
-        frame = inputFrame;
-    }
+    public void display(IFrame inputFrame) {
 
-    @Override
-    public void display() {
 //        Imgproc.drawContours(frame.getRGBA(),
 //                             frame.getContours(),
 //                             -1,
 //                             contourColour,
 //                             -1);
 
-        Imgproc.drawContours(frame.getRGBA(),
-                frame.getContours(),
+        Imgproc.drawContours(inputFrame.getRGBA(),
+                inputFrame.getContours(),
                 0,
                 contourColour,
                 -1);
 
+    }
+
+    private void setDefaultColour(){
+        contourColour = new Scalar(0,255,0,255);
     }
 
 }

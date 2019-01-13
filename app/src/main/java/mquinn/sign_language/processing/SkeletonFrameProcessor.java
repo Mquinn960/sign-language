@@ -3,6 +3,7 @@ package mquinn.sign_language.processing;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
 import org.opencv.imgproc.Imgproc;
+import org.opencv.ximgproc.Ximgproc;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,11 +16,6 @@ public class SkeletonFrameProcessor implements IFrameProcessor {
     private Mat skeletonMask = new Mat();
     private Mat hierarchy = new Mat();
     private List<MatOfPoint> skeletonContours = new ArrayList<>();
-    private IThinningStrategy thinningStrategy;
-
-    public SkeletonFrameProcessor(IThinningStrategy inputThinningStrategy) {
-        thinningStrategy = inputThinningStrategy;
-    }
 
     @Override
     public IFrame process(IFrame inputFrame) {
@@ -28,7 +24,7 @@ public class SkeletonFrameProcessor implements IFrameProcessor {
 
         inputMask = inputFrame.getMaskedImage();
 
-        skeletonMask = thinningStrategy.thinMask(inputMask);
+        Ximgproc.thinning(inputMask, skeletonMask, Ximgproc.THINNING_ZHANGSUEN);
 
         Imgproc.findContours(skeletonMask,
                 skeletonContours,

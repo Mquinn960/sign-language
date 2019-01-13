@@ -1,10 +1,16 @@
 package mquinn.sign_language;
 
+import android.Manifest;
 import android.app.Activity;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.view.SurfaceView;
+import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.Button;
 
 import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.CameraBridgeViewBase;
@@ -37,7 +43,9 @@ public class MainActivity extends Activity implements CvCameraViewListener2 {
     private IFrame preProcessedFrame, processedFrame, postProcessedFrame;
 
     private IFrameProcessor mainFrameProcessor;
-    private IRenderer mainDisplayer;
+    private IRenderer mainRenderer;
+
+    private Button btnCanny, btnMask, btnSkeleton;
 
     private DetectionMethod detectionMethod;
 
@@ -67,12 +75,46 @@ public class MainActivity extends Activity implements CvCameraViewListener2 {
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         // Set content view
-        setContentView(R.layout.color_blob_detection_surface_view);
+        setContentView(R.layout.sign_language_activity_surface_view);
 
         // Camera config
-        mOpenCvCameraView = findViewById(R.id.color_blob_detection_activity_surface_view);
+        mOpenCvCameraView = findViewById(R.id.sign_language_activity_surface_view);
         mOpenCvCameraView.setVisibility(SurfaceView.VISIBLE);
         mOpenCvCameraView.setCvCameraViewListener(this);
+
+        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.CAMERA)
+                == PackageManager.PERMISSION_DENIED){
+            ActivityCompat.requestPermissions(this, new String[] {Manifest.permission.CAMERA}, 1);
+        }
+
+        btnCanny = (Button) findViewById(R.id.button_canny);
+        btnMask = (Button) findViewById(R.id.button_mask);
+        btnSkeleton = (Button) findViewById(R.id.button_skeleton);
+
+        btnCanny.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                setProcessors(DetectionMethod.CANNY_EDGES);
+            };
+        });
+        btnMask.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                setProcessors(DetectionMethod.CONTOUR_MASK);
+            };
+        });
+        btnSkeleton.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                setProcessors(DetectionMethod.SKELETON);
+            };
+        });
 
     }
 
@@ -88,7 +130,7 @@ public class MainActivity extends Activity implements CvCameraViewListener2 {
         postProcessedFrame = postProcessor.postProcess(processedFrame);
 
         // Display anything required
-        mainDisplayer.display(postProcessedFrame);
+        mainRenderer.display(postProcessedFrame);
 
         // Return processed Mat
         return postProcessedFrame.getRGBA();
@@ -121,11 +163,20 @@ public class MainActivity extends Activity implements CvCameraViewListener2 {
 
     public void onCameraViewStarted(int width, int height) {
 
-        // Set detection method
-        detectionMethod = DetectionMethod.SKELETON;
+        setProcessors(DetectionMethod.CANNY_EDGES);
 
-        // Create Displayers
-        mainDisplayer = new MainRenderer(detectionMethod);
+    }
+
+    public void onCameraViewStopped() {
+
+    }
+
+    private void setProcessors(DetectionMethod method){
+        // Set detection method
+        detectionMethod = method;
+
+        // Create renderers
+        mainRenderer = new MainRenderer(detectionMethod);
 
         // Pre processors
         preProcessor = new InputFramePreProcessor(new CameraFrameAdapter(new DownSamplingFrameProcessor()));
@@ -135,11 +186,6 @@ public class MainActivity extends Activity implements CvCameraViewListener2 {
 
         // Post processors
         postProcessor = new OutputFramePostProcessor(new UpScalingFramePostProcessor());
-
-    }
-
-    public void onCameraViewStopped() {
-
     }
 
 }

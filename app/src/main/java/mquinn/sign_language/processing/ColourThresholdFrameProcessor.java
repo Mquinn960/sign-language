@@ -76,7 +76,6 @@ public class ColourThresholdFrameProcessor implements IFrameProcessor {
             }
 
             inputFrame.setCountours(outerContours);
-            inputFrame.setHierarchy(mHierarchy);
         }
 
         return inputFrame;

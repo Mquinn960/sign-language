@@ -144,13 +144,4 @@ public class Frame extends Mat implements IFrame {
         maskedImage = inputMaskedImage;
     }
 
-    @Override
-    public Mat getHierarchy() {
-        return hierarchy;
-    }
-
-    @Override
-    public void setHierarchy(Mat hierarchy) {
-        this.hierarchy = hierarchy;
-    }
 }

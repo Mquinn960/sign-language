@@ -16,7 +16,7 @@ public class SkeletonRenderer implements IRenderer {
     @Override
     public void display(IFrame inputFrame) {
 
-        // display skeleton
+//         display skeleton
         Imgproc.drawContours(inputFrame.getRGBA(),
                 inputFrame.getSkeletonContours(),
                 -1,

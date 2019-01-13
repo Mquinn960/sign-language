@@ -36,9 +36,6 @@ public interface IFrame {
     Mat getMaskedImage();
     void setMaskedImage(Mat maskedImage);
 
-    Mat getHierarchy();
-    void setHierarchy(Mat hierarchy);
-
     Mat getWindowMask();
     void setWindowMask(Mat maskedImage);
 

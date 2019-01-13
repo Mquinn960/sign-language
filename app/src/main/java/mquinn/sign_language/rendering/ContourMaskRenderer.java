@@ -16,12 +16,6 @@ public class ContourMaskRenderer implements IRenderer {
     @Override
     public void display(IFrame inputFrame) {
 
-//        Imgproc.drawContours(frame.getRGBA(),
-//                             frame.getContours(),
-//                             -1,
-//                             contourColour,
-//                             -1);
-
         Imgproc.drawContours(inputFrame.getRGBA(),
                 inputFrame.getContours(),
                 0,

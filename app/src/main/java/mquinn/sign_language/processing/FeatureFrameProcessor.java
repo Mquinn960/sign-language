@@ -19,8 +19,6 @@ public class FeatureFrameProcessor implements IFrameProcessor {
     private Mat featureInput = new Mat();
     private FeatureTarget featureTarget;
 
-    private MatOfPoint current = new MatOfPoint();
-
     public FeatureFrameProcessor(FeatureTarget inputFeatureTarget) {
         featureTarget = inputFeatureTarget;
     }
@@ -45,8 +43,10 @@ public class FeatureFrameProcessor implements IFrameProcessor {
 
                 break;
             case CONTOUR_OUTLINE:
+
                 //TODO: outline method
                 // featureInput = inputFrame.getOutline();
+
                 break;
             case CANNY_EDGES:
 

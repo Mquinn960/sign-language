@@ -3,7 +3,6 @@ package mquinn.sign_language.processing;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
-import org.opencv.core.Scalar;
 import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 
@@ -20,9 +19,6 @@ public class ColourThresholdFrameProcessor implements IFrameProcessor {
 
     private List<MatOfPoint> tempContours = new ArrayList<>();
     private List<MatOfPoint> outerContours = new ArrayList<>();
-
-    private Scalar lowerBound = new Scalar(0);
-    private Scalar upperBound = new Scalar(0);
 
     private SkinColourProfile skinColourProfile;
 
@@ -42,27 +38,11 @@ public class ColourThresholdFrameProcessor implements IFrameProcessor {
 
         clearContours();
 
-        // H
-        lowerBound.val[0] = 0;
-        upperBound.val[0] = 25;
-
-        // S
-        lowerBound.val[1] = 40;
-        upperBound.val[1] = 255;
-
-        // V
-        lowerBound.val[2] = 60;
-        upperBound.val[2] = 255;
-
-        // A
-        lowerBound.val[3] = 0;
-        upperBound.val[3] = 255;
-
         // Convert downsampled image to HSV
         Imgproc.cvtColor(inputFrame.getDownSampledMat(), mHsvMat, Imgproc.COLOR_RGB2HSV_FULL);
 
         // Find out if input Mat is within bounds
-        Core.inRange(mHsvMat, lowerBound, upperBound, mMask);
+        Core.inRange(mHsvMat, skinColourProfile.getLowerBound(), skinColourProfile.getUpperBound(), mMask);
 
         // Erode
         Imgproc.erode(mMask, mErodedMask, new Mat());

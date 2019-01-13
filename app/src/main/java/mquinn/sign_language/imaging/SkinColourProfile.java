@@ -20,6 +20,26 @@ public class SkinColourProfile {
         return instance;
     }
 
+    public void setHSVAValue(Character property, int lower, int upper){
+
+        switch (property){
+            case 'H':
+                lowerBound.val[HSVA.H.getScalarPosition()] = lower;
+                upperBound.val[HSVA.H.getScalarPosition()] = upper;
+            case 'S':
+                lowerBound.val[HSVA.S.getScalarPosition()] = lower;
+                upperBound.val[HSVA.S.getScalarPosition()] = upper;
+            case 'V':
+                lowerBound.val[HSVA.V.getScalarPosition()] = lower;
+                upperBound.val[HSVA.V.getScalarPosition()] = upper;
+            case 'A':
+                lowerBound.val[HSVA.A.getScalarPosition()] = lower;
+                upperBound.val[HSVA.A.getScalarPosition()] = upper;
+        }
+
+    }
+
+
     public Scalar getLowerBound(){
         return upperBound;
     }
@@ -28,14 +48,12 @@ public class SkinColourProfile {
         return lowerBound;
     }
 
-    public boolean setHSVBounds(HSVA HSVAValue, int lowerValue, int upperValue){
-        if (withinBounds(lowerValue) && withinBounds(upperValue)){
-            lowerBound.val[HSVAValue.getScalarPosition()] = lowerValue;
-            upperBound.val[HSVAValue.getScalarPosition()] = upperValue;
-            return true;
-        } else {
-            return false;
-        }
+    public void setLowerBound(Scalar lowerBound) {
+        this.lowerBound = lowerBound;
+    }
+
+    public void setUpperBound(Scalar upperBound) {
+        this.upperBound = upperBound;
     }
 
     private void setDefaultSkinColourProfile(){
@@ -54,10 +72,6 @@ public class SkinColourProfile {
         // A
         lowerBound.val[3] = 0;
         upperBound.val[3] = 255;
-    }
-
-    private boolean withinBounds(int valueToCheck){
-        return (valueToCheck < 255 && valueToCheck > 0);
     }
 
 }

@@ -2,10 +2,14 @@ package mquinn.sign_language;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.Context;
 import android.content.pm.PackageManager;
+import android.content.res.Resources;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.util.Log;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.Window;
@@ -19,12 +23,21 @@ import org.opencv.android.CameraBridgeViewBase.CvCameraViewListener2;
 import org.opencv.android.LoaderCallbackInterface;
 import org.opencv.android.OpenCVLoader;
 import org.opencv.core.Mat;
+import org.opencv.core.MatOfPoint;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.OutputStreamWriter;
+import java.util.Iterator;
 
 import mquinn.sign_language.imaging.IFrame;
 import mquinn.sign_language.processing.DetectionMethod;
 import mquinn.sign_language.processing.DownSamplingFrameProcessor;
 import mquinn.sign_language.processing.IFrameProcessor;
 import mquinn.sign_language.processing.MainFrameProcessor;
+import mquinn.sign_language.processing.ResizingFrameProcessor;
+import mquinn.sign_language.processing.SizeOperation;
 import mquinn.sign_language.processing.postprocessing.IFramePostProcessor;
 import mquinn.sign_language.processing.postprocessing.OutputFramePostProcessor;
 import mquinn.sign_language.processing.postprocessing.UpScalingFramePostProcessor;
@@ -33,6 +46,7 @@ import mquinn.sign_language.processing.preprocessing.IFramePreProcessor;
 import mquinn.sign_language.processing.preprocessing.InputFramePreProcessor;
 import mquinn.sign_language.rendering.IRenderer;
 import mquinn.sign_language.rendering.MainRenderer;
+import mquinn.sign_language.svm.FrameClassifier;
 
 public class MainActivity extends Activity implements CvCameraViewListener2 {
 
@@ -40,9 +54,10 @@ public class MainActivity extends Activity implements CvCameraViewListener2 {
 
     private IFramePreProcessor preProcessor;
     private IFramePostProcessor postProcessor;
-    private IFrame preProcessedFrame, processedFrame, postProcessedFrame;
+    private IFrame preProcessedFrame, processedFrame, postProcessedFrame, classifiedFrame;
 
-    private IFrameProcessor mainFrameProcessor;
+    private IFrameProcessor mainFrameProcessor, frameClassifier;
+
     private IRenderer mainRenderer;
 
     private Button btnCanny, btnMask, btnSkeleton;
@@ -129,6 +144,9 @@ public class MainActivity extends Activity implements CvCameraViewListener2 {
         // Post processing of processed frame and upsampling
         postProcessedFrame = postProcessor.postProcess(processedFrame);
 
+        // Actual frame classification
+        classifiedFrame = frameClassifier.process(postProcessedFrame);
+
         // Display anything required
         mainRenderer.display(postProcessedFrame);
 
@@ -165,6 +183,10 @@ public class MainActivity extends Activity implements CvCameraViewListener2 {
 
         setProcessors(DetectionMethod.CANNY_EDGES);
 
+        File xmlFile = initialiseXMLTrainingData();
+
+        frameClassifier = new FrameClassifier(xmlFile);
+
     }
 
     public void onCameraViewStopped() {
@@ -179,13 +201,47 @@ public class MainActivity extends Activity implements CvCameraViewListener2 {
         mainRenderer = new MainRenderer(detectionMethod);
 
         // Pre processors
-        preProcessor = new InputFramePreProcessor(new CameraFrameAdapter(new DownSamplingFrameProcessor()));
+        preProcessor = new InputFramePreProcessor(new CameraFrameAdapter(
+                                                                    new DownSamplingFrameProcessor(),
+                                                                    new ResizingFrameProcessor(SizeOperation.DOWN)
+                                                                    )
+                                                    );
 
         // Frame Processors
         mainFrameProcessor = new MainFrameProcessor(detectionMethod);
 
         // Post processors
-        postProcessor = new OutputFramePostProcessor(new UpScalingFramePostProcessor());
+        postProcessor = new OutputFramePostProcessor(new UpScalingFramePostProcessor(),
+                                                    new ResizingFrameProcessor(SizeOperation.UP));
+    }
+
+    private File initialiseXMLTrainingData(){
+
+        try {
+            InputStream is = getResources().openRawResource(R.raw.temp);
+            File cascadeDir = getDir("cascade", Context.MODE_PRIVATE);
+            File mCascadeFile = new File(cascadeDir,"training.xml");
+
+            FileOutputStream os = new FileOutputStream(mCascadeFile);
+
+
+            byte[] buffer = new byte[4096];
+            int bytesRead;
+            while ((bytesRead = is.read(buffer)) != -1) {
+                os.write(buffer, 0, bytesRead);
+            }
+
+            is.close();
+            os.close();
+
+            return mCascadeFile;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new File("");
+        }
+
+
     }
 
 }

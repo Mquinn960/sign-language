@@ -25,6 +25,18 @@ public class PoseClassifier {
 
 
 
+//        def run_svm():
+//        clf=svm.SVC(decision_function_shape='ovo')
+//        print("svm started")
+//        clf.fit(x,y)
+//	#print clf.n_layers_
+//                pred=clf.predict(x_)
+//	#print(pred)
+//        np.savetxt('submission_svm.csv', np.c_[range(1,len(test)+1),pred,label_test], delimiter=',', header = 'ImageId,Label,TrueLabel', comments = '', fmt='%d')
+//        calc_accuracy("SVM",label_test,pred)
+
+
+
     }
 
 

@@ -3,11 +3,20 @@ package mquinn.sign_language.imaging;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfInt;
 import org.opencv.core.MatOfPoint;
+import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 
 import java.util.List;
 
+import mquinn.sign_language.svm.LetterClass;
+
 public interface IFrame {
+
+    LetterClass getLetterClass();
+    void setLetterClass(LetterClass letter);
+
+    Size getOriginalSize();
+    void setOriginalSize(Size originalSize);
 
     Mat getRGBA();
     void setRGBA(Mat inputRGBA);

@@ -1,9 +1,12 @@
 package mquinn.sign_language.processing;
 
+import android.util.Log;
+
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
 import org.opencv.imgproc.Imgproc;
 
+import java.io.Console;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,26 +33,28 @@ public class FeatureFrameProcessor implements IFrameProcessor {
             case SKELETON:
 
                 featureInput = inputFrame.getSkeleton();
-                Imgproc.goodFeaturesToTrack(featureInput, features, 30, 0.01, 10);
+                Imgproc.goodFeaturesToTrack(featureInput, features, 20, 0.005, 8);
 
                 break;
             case CONTOUR_MASK:
 
                 featureInput = inputFrame.getMaskedImage();
                 Imgproc.cvtColor(inputFrame.getDownSampledMat(), greyScale, Imgproc.COLOR_RGBA2GRAY);
-                Imgproc.goodFeaturesToTrack(greyScale, features, 30, 0.01, 10, featureInput,3,3);
+                Imgproc.goodFeaturesToTrack(greyScale, features, 20, 0.01, 10, featureInput,3,3);
 
                 break;
             case CANNY_EDGES:
 
                 featureInput = inputFrame.getCannyEdgeMask();
-                Imgproc.goodFeaturesToTrack(featureInput, features, 30, 0.01, 10);
+                Imgproc.goodFeaturesToTrack(featureInput, features, 20, 0.01, 10);
 
                 break;
             default:
                 featureInput = inputFrame.getMaskedImage();
                 break;
         }
+
+//        Log.d("DEBUG","Corners: " + features.toList().size());
 
         featureList.add(features);
         inputFrame.setFeatures(featureList);

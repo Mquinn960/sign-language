@@ -2,10 +2,16 @@ package mquinn.sign_language.imaging;
 
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
+import org.opencv.core.Size;
 
 import java.util.List;
 
+import mquinn.sign_language.svm.LetterClass;
+
 public class Frame extends Mat implements IFrame {
+
+    // Classified letter result of the input image
+    private LetterClass letter;
 
     // Input camera mat RGBA values
     private Mat rGBA;
@@ -40,8 +46,21 @@ public class Frame extends Mat implements IFrame {
     // List of canny edge contour vectors
     private List<MatOfPoint> cannyEdges;
 
+    // Original size of the input frame
+    private Size originalSize;
+
     public Frame(Mat inputRGBA) {
         rGBA = inputRGBA;
+    }
+
+    @Override
+    public Size getOriginalSize() {
+        return originalSize;
+    }
+
+    @Override
+    public void setOriginalSize(Size inputOriginalSize) {
+        originalSize = inputOriginalSize;
     }
 
     @Override
@@ -144,4 +163,13 @@ public class Frame extends Mat implements IFrame {
         maskedImage = inputMaskedImage;
     }
 
+    @Override
+    public LetterClass getLetterClass() {
+        return letter;
+    }
+
+    @Override
+    public void setLetterClass(LetterClass letter) {
+        this.letter = letter;
+    }
 }

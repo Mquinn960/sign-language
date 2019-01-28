@@ -8,7 +8,9 @@
 /build
 /captures
 .externalNativeBuild
-app/release/*
+app/release
+app/release/release
+app/release/release/app.aab
 
 # Built application files
 *.apk

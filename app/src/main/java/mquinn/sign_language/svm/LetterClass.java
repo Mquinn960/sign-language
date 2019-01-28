@@ -2,6 +2,7 @@ package mquinn.sign_language.svm;
 
 public enum LetterClass {
 
+    NONE(0),
     A(1),
     B(2),
     C(3),
@@ -27,7 +28,8 @@ public enum LetterClass {
     W(23),
     X(24),
     Y(25),
-    Z(26); // Won't be used
+    Z(26),
+    ERROR(99);// Won't be used
 
     private int letterIndex;
 
@@ -35,15 +37,18 @@ public enum LetterClass {
         this.letterIndex = letterIndex;
     }
 
-    public int getLetterIndex(){
-        return letterIndex;
-    }
-
     public static LetterClass getLetter(int legIndex) {
         for (LetterClass l : LetterClass.values()) {
             if (l.letterIndex == legIndex) return l;
         }
-        throw new IllegalArgumentException("Letter not found");
+        return LetterClass.ERROR;
+    }
+
+    public static int getIndex(String letter) {
+        for (LetterClass l : LetterClass.values()) {
+            if (l.toString().equals(letter)) return l.letterIndex;
+        }
+        throw new IllegalArgumentException("Index not found");
     }
 
     // Usage

@@ -47,6 +47,7 @@ import mquinn.sign_language.processing.preprocessing.InputFramePreProcessor;
 import mquinn.sign_language.rendering.IRenderer;
 import mquinn.sign_language.rendering.MainRenderer;
 import mquinn.sign_language.svm.FrameClassifier;
+import mquinn.sign_language.svm.LetterClass;
 
 public class MainActivity extends Activity implements CvCameraViewListener2 {
 
@@ -218,7 +219,7 @@ public class MainActivity extends Activity implements CvCameraViewListener2 {
     private File initialiseXMLTrainingData(){
 
         try {
-            InputStream is = getResources().openRawResource(R.raw.temp);
+            InputStream is = getResources().openRawResource(R.raw.trained);
             File cascadeDir = getDir("cascade", Context.MODE_PRIVATE);
             File mCascadeFile = new File(cascadeDir,"training.xml");
 
@@ -240,7 +241,6 @@ public class MainActivity extends Activity implements CvCameraViewListener2 {
             e.printStackTrace();
             return new File("");
         }
-
 
     }
 

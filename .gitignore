@@ -40,6 +40,7 @@ proguard/
 # Log Files
 *.log
 
+app/src/main/res/raw/*
 # Android Studio Navigation editor temp files
 .navigation/
 

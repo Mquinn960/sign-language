@@ -3,8 +3,10 @@ package mquinn.sign_language.processing;
 import android.util.Log;
 
 import org.opencv.core.Mat;
+import org.opencv.core.MatOfKeyPoint;
 import org.opencv.core.MatOfPoint;
 import org.opencv.imgproc.Imgproc;
+import org.opencv.xfeatures2d.SIFT;
 
 import java.io.Console;
 import java.util.ArrayList;
@@ -19,6 +21,11 @@ public class FeatureFrameProcessor implements IFrameProcessor {
     private Mat greyScale = new Mat();
     private Mat featureInput = new Mat();
     private DetectionMethod detectionMethod;
+
+    private MatOfKeyPoint keypoints = new MatOfKeyPoint();
+    private Mat descriptors = new Mat();
+
+    private SIFT siftExtractor = SIFT.create(100, 3, 0.04, 10, 1.6);
 
     public FeatureFrameProcessor(DetectionMethod inputDetectionMethod) {
         detectionMethod = inputDetectionMethod;
@@ -47,6 +54,10 @@ public class FeatureFrameProcessor implements IFrameProcessor {
 
                 featureInput = inputFrame.getCannyEdgeMask();
                 Imgproc.goodFeaturesToTrack(featureInput, features, 20, 0.01, 10);
+
+                siftExtractor.detect(inputFrame.getCannyEdgeMask(), keypoints);
+                siftExtractor.compute(inputFrame.getCannyEdgeMask(), keypoints, descriptors);
+                inputFrame.setSiftFeatures(descriptors);
 
                 break;
             default:

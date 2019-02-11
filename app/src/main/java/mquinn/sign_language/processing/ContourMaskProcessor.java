@@ -13,8 +13,6 @@ public class ContourMaskProcessor implements IFrameProcessor {
     private Mat blankMask =  new Mat();
     private Mat croppedMask =  new Mat();
     private Mat initialImage =  new Mat();
-    private Scalar contourColour = new Scalar(0, 0, 255);
-    private Scalar backgroundColour = new Scalar(255,255,255);
 
     @Override
     public IFrame process(IFrame inputFrame) {
@@ -37,9 +35,11 @@ public class ContourMaskProcessor implements IFrameProcessor {
         greyScale.copyTo(croppedMask, blankMask);
 
         // Copy full image details within contoured window
+        // Inner hand image with details
         inputFrame.setWindowMask(croppedMask);
 
         // Set masked image on the input frame
+        // Area of hand with no inner details
         inputFrame.setMaskedImage(blankMask);
 
         return inputFrame;

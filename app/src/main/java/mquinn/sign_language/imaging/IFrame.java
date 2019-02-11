@@ -48,4 +48,7 @@ public interface IFrame {
     Mat getWindowMask();
     void setWindowMask(Mat maskedImage);
 
+    Mat getSiftFeatures();
+    void setSiftFeatures(Mat siftFeatures);
+
 }

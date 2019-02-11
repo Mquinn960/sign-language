@@ -14,9 +14,9 @@ public class CameraFrameAdapter implements IFramePreProcessor {
     private IFrameProcessor downSampler, resizer;
     private IFrame outputFrame;
 
-    public CameraFrameAdapter(IFrameProcessor downSamplerFrameProcessor,
+    public CameraFrameAdapter(IFrameProcessor downSamplingFrameProcessor,
                               IFrameProcessor resizingFrameProcessor) {
-        downSampler = downSamplerFrameProcessor;
+        downSampler = downSamplingFrameProcessor;
         resizer = resizingFrameProcessor;
     }
 
@@ -30,10 +30,10 @@ public class CameraFrameAdapter implements IFramePreProcessor {
         outputFrame.setOriginalSize(inputFrame.rgba().size());
 
         // Resize image
-        outputFrame = resizer.process(outputFrame);
+//        outputFrame = resizer.process(outputFrame);
 
         // Further downsampling for efficiency
-//        outputFrame = downSampler.process(outputFrame);
+        outputFrame = downSampler.process(outputFrame);
 
         return outputFrame;
     }

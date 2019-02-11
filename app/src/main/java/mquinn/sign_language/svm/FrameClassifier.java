@@ -2,10 +2,14 @@ package mquinn.sign_language.svm;
 
 import android.util.Log;
 
+import org.opencv.core.Core;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
+import org.opencv.core.Point;
+import org.opencv.core.Scalar;
 import org.opencv.core.TermCriteria;
+import org.opencv.imgproc.Imgproc;
 import org.opencv.ml.SVM;
 
 import java.io.File;
@@ -16,11 +20,11 @@ import mquinn.sign_language.processing.IFrameProcessor;
 
 public class FrameClassifier implements IFrameProcessor {
 
-    SVM svm;
-    IFrame workingFrame;
-    MatOfPoint features;
-    LetterClass result;
-    Mat flatFeatures, results;
+    private SVM svm;
+    private IFrame workingFrame;
+    private MatOfPoint features;
+    private LetterClass result;
+    private Mat flatFeatures, results;
 
     public FrameClassifier(File xmlFile){
 
@@ -47,37 +51,75 @@ public class FrameClassifier implements IFrameProcessor {
     }
 
     private void classify(){
-        flattenFeatures();
+
+        Mat x = workingFrame.getSiftFeatures();
+
+        flatFeatures = x.reshape(1,1);
+
         flatFeatures.convertTo(flatFeatures, CvType.CV_32F);
 
         float response = svm.predict(flatFeatures);
 
         svm.predict(flatFeatures, results, 0);
 
-        for (int row = 0; row < results.rows(); row++){
-            for (int col = 0; col < results.cols(); col++) {
-                Log.d("DEBUG", results.get(row, col).toString());
-            }
-        }
-
         result = LetterClass.getLetter((int)response);
         workingFrame.setLetterClass(result);
+
+        Imgproc.putText(workingFrame.getRGBA(),
+                workingFrame.getLetterClass().toString(),
+                new Point(100,180),
+                Core.FONT_HERSHEY_PLAIN,
+                2,
+                new Scalar(255,255,255),
+                2);
+
         Log.d("DEBUG", "LETTER CLASS: " + result);
     }
 
+//    private void classify(){
+//        flattenFeatures();
+//        flatFeatures.convertTo(flatFeatures, CvType.CV_32F);
+//
+//        float response = svm.predict(flatFeatures);
+//
+//        svm.predict(flatFeatures, results, 0);
+//
+//        result = LetterClass.getLetter((int)response);
+//        workingFrame.setLetterClass(result);
+//
+//        Imgproc.putText(workingFrame.getRGBA(),
+//                workingFrame.getLetterClass().toString(),
+//                new Point(100,180),
+//                Core.FONT_HERSHEY_PLAIN,
+//                2,
+//                new Scalar(255,255,255),
+//                2);
+//
+//        Log.d("DEBUG", "LETTER CLASS: " + result);
+//    }
+
+//    private boolean isEligibleToClassify() {
+//        // SVM Prediction
+//        if (!workingFrame.getFeatures().isEmpty()) {
+//            Iterator<MatOfPoint> allMatOfPoint = workingFrame.getFeatures().iterator();
+//            while (allMatOfPoint.hasNext()) {
+//                MatOfPoint temp = allMatOfPoint.next();
+//                if (temp.toList().size() == 20){
+//                    features = temp;
+//                    return true;
+//                }
+//            }
+//        }
+//        return false;
+//    }
+
     private boolean isEligibleToClassify() {
         // SVM Prediction
-        if (!workingFrame.getFeatures().isEmpty()) {
-            Iterator<MatOfPoint> allMatOfPoint = workingFrame.getFeatures().iterator();
-            while (allMatOfPoint.hasNext()) {
-                MatOfPoint temp = allMatOfPoint.next();
-                if (temp.toList().size() == 20){
-                    features = temp;
-                    return true;
-                }
-            }
+        if (workingFrame.getSiftFeatures().rows() > 0) {
+            return true;
+        } else {
+            return false;
         }
-        return false;
     }
 
     private void flattenFeatures(){

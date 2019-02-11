@@ -4,12 +4,9 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageManager;
-import android.content.res.Resources;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
-import android.util.Log;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.Window;
@@ -22,14 +19,18 @@ import org.opencv.android.CameraBridgeViewBase.CvCameraViewFrame;
 import org.opencv.android.CameraBridgeViewBase.CvCameraViewListener2;
 import org.opencv.android.LoaderCallbackInterface;
 import org.opencv.android.OpenCVLoader;
+import org.opencv.core.Core;
 import org.opencv.core.Mat;
-import org.opencv.core.MatOfPoint;
+import org.opencv.core.Point;
+import org.opencv.core.Scalar;
+import org.opencv.imgproc.Imgproc;
+import org.opencv.xfeatures2d.SIFT;
+import org.opencv.xfeatures2d.SURF;
+import org.opencv.xfeatures2d.Xfeatures2d;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
-import java.io.OutputStreamWriter;
-import java.util.Iterator;
 
 import mquinn.sign_language.imaging.IFrame;
 import mquinn.sign_language.processing.DetectionMethod;
@@ -47,7 +48,6 @@ import mquinn.sign_language.processing.preprocessing.InputFramePreProcessor;
 import mquinn.sign_language.rendering.IRenderer;
 import mquinn.sign_language.rendering.MainRenderer;
 import mquinn.sign_language.svm.FrameClassifier;
-import mquinn.sign_language.svm.LetterClass;
 
 public class MainActivity extends Activity implements CvCameraViewListener2 {
 
@@ -202,18 +202,21 @@ public class MainActivity extends Activity implements CvCameraViewListener2 {
         mainRenderer = new MainRenderer(detectionMethod);
 
         // Pre processors
-        preProcessor = new InputFramePreProcessor(new CameraFrameAdapter(
-                                                                    new DownSamplingFrameProcessor(),
-                                                                    new ResizingFrameProcessor(SizeOperation.DOWN)
-                                                                    )
-                                                    );
+        preProcessor = new InputFramePreProcessor(
+                            new CameraFrameAdapter(
+                                new DownSamplingFrameProcessor(),
+                                new ResizingFrameProcessor(SizeOperation.DOWN)
+                            )
+                        );
 
         // Frame Processors
         mainFrameProcessor = new MainFrameProcessor(detectionMethod);
 
         // Post processors
-        postProcessor = new OutputFramePostProcessor(new UpScalingFramePostProcessor(),
-                                                    new ResizingFrameProcessor(SizeOperation.UP));
+        postProcessor = new OutputFramePostProcessor(
+                            new UpScalingFramePostProcessor(),
+                            new ResizingFrameProcessor(SizeOperation.UP)
+                        );
     }
 
     private File initialiseXMLTrainingData(){
@@ -224,7 +227,6 @@ public class MainActivity extends Activity implements CvCameraViewListener2 {
             File mCascadeFile = new File(cascadeDir,"training.xml");
 
             FileOutputStream os = new FileOutputStream(mCascadeFile);
-
 
             byte[] buffer = new byte[4096];
             int bytesRead;

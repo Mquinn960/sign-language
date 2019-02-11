@@ -19,7 +19,7 @@ public class Frame extends Mat implements IFrame {
     // Skin mask found by threshold contouring
     private List<MatOfPoint> contours;
 
-    // Hierarchy of founf contours
+    // Hierarchy of found contours
     private Mat hierarchy;
 
     // Downsampled starting mat
@@ -48,6 +48,8 @@ public class Frame extends Mat implements IFrame {
 
     // Original size of the input frame
     private Size originalSize;
+
+    private Mat siftFeatures;
 
     public Frame(Mat inputRGBA) {
         rGBA = inputRGBA;
@@ -171,5 +173,15 @@ public class Frame extends Mat implements IFrame {
     @Override
     public void setLetterClass(LetterClass letter) {
         this.letter = letter;
+    }
+
+    @Override
+    public Mat getSiftFeatures() {
+        return siftFeatures;
+    }
+
+    @Override
+    public void setSiftFeatures(Mat siftFeatures) {
+        this.siftFeatures = siftFeatures;
     }
 }

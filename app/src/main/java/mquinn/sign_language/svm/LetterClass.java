@@ -28,8 +28,8 @@ public enum LetterClass {
     W(23),
     X(24),
     Y(25),
-    Z(26),
-    ERROR(99);// Won't be used
+    Z(26), // Won't be used
+    ERROR(99);
 
     private int letterIndex;
 

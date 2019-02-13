@@ -3,9 +3,11 @@ package mquinn.sign_language.processing;
 import android.util.Log;
 
 import org.opencv.core.Mat;
+import org.opencv.core.MatOfDouble;
 import org.opencv.core.MatOfKeyPoint;
 import org.opencv.core.MatOfPoint;
 import org.opencv.imgproc.Imgproc;
+import org.opencv.objdetect.HOGDescriptor;
 import org.opencv.xfeatures2d.SIFT;
 
 import java.io.Console;
@@ -21,11 +23,7 @@ public class FeatureFrameProcessor implements IFrameProcessor {
     private Mat greyScale = new Mat();
     private Mat featureInput = new Mat();
     private DetectionMethod detectionMethod;
-
-    private MatOfKeyPoint keypoints = new MatOfKeyPoint();
-    private Mat descriptors = new Mat();
-
-    private SIFT siftExtractor = SIFT.create(100, 3, 0.04, 10, 1.6);
+    private MatOfDouble weights = new MatOfDouble();
 
     public FeatureFrameProcessor(DetectionMethod inputDetectionMethod) {
         detectionMethod = inputDetectionMethod;
@@ -40,32 +38,26 @@ public class FeatureFrameProcessor implements IFrameProcessor {
             case SKELETON:
 
                 featureInput = inputFrame.getSkeleton();
-                Imgproc.goodFeaturesToTrack(featureInput, features, 20, 0.005, 8);
+                Imgproc.goodFeaturesToTrack(featureInput, features, 15, 0.005, 8);
 
                 break;
             case CONTOUR_MASK:
 
                 featureInput = inputFrame.getMaskedImage();
                 Imgproc.cvtColor(inputFrame.getDownSampledMat(), greyScale, Imgproc.COLOR_RGBA2GRAY);
-                Imgproc.goodFeaturesToTrack(greyScale, features, 20, 0.01, 10, featureInput,3,3);
+                Imgproc.goodFeaturesToTrack(greyScale, features, 15, 0.015, 5, featureInput,3,3);
 
                 break;
             case CANNY_EDGES:
 
                 featureInput = inputFrame.getCannyEdgeMask();
-                Imgproc.goodFeaturesToTrack(featureInput, features, 20, 0.01, 10);
-
-                siftExtractor.detect(inputFrame.getCannyEdgeMask(), keypoints);
-                siftExtractor.compute(inputFrame.getCannyEdgeMask(), keypoints, descriptors);
-                inputFrame.setSiftFeatures(descriptors);
+                Imgproc.goodFeaturesToTrack(featureInput, features, 15, 0.015, 5);
 
                 break;
             default:
                 featureInput = inputFrame.getMaskedImage();
                 break;
         }
-
-//        Log.d("DEBUG","Corners: " + features.toList().size());
 
         featureList.add(features);
         inputFrame.setFeatures(featureList);

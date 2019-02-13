@@ -29,11 +29,11 @@ dependencies {
 }
 
 
-
-// Library build phase
-// Export this JAR for use in the offline trainer
-// Puts exported JAR in \app\build\outputs\jar
 //
+//// Library build phase
+//// Export this JAR for use in the offline trainer
+//// Puts exported JAR in \app\build\outputs\jar
+
 //apply plugin: 'com.android.library'
 //
 //android {
@@ -50,7 +50,7 @@ dependencies {
 //        }
 //    }
 //}
-//
+
 //dependencies {
 //    implementation fileTree(include: ['*.jar'], dir: 'libs')
 //    implementation 'com.android.support:appcompat-v7:28.0.0'

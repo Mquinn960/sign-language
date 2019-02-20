@@ -17,11 +17,11 @@ public class DownSamplingFrameProcessor implements IFrameProcessor {
 
     @Override
     public IFrame process(IFrame inputFrame) {
-        return downSample(inputFrame, 1);
+        return downSample(inputFrame, 2);
     }
 
     private IFrame downSample(IFrame frameToSample, int samples){
-        for (int i=0; i<samples; i++){
+        for (int i=1; i<=samples; i++){
             Imgproc.pyrDown(frameToSample.getRGBA(), downSampledInputMat);
         }
         frameToSample.setDownSampledMat(downSampledInputMat);

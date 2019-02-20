@@ -12,7 +12,7 @@ import mquinn.sign_language.imaging.IFrame;
 
 public class UpScalingFramePostProcessor implements IFramePostProcessor {
 
-    private Scalar scalingFactor = new Scalar(2,2);
+    private Scalar scalingFactor = new Scalar(4,4);
 
     public UpScalingFramePostProcessor() {
     }

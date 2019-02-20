@@ -36,7 +36,8 @@ public class FrameClassifier implements IFrameProcessor {
         svm = SVM.create();
 
         svm.setType(SVM.C_SVC);
-        svm.setKernel(SVM.LINEAR);
+        svm.setKernel(SVM.RBF);
+
         svm.setTermCriteria(new TermCriteria(TermCriteria.MAX_ITER, 100, 1e-6));
 
         svm = SVM.load(xmlFile.getAbsolutePath());

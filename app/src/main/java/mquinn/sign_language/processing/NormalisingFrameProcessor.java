@@ -10,10 +10,26 @@ public class NormalisingFrameProcessor implements IFrameProcessor {
 
     private int target_width = 200;
 
+    private DetectionMethod detectionMethod;
+
+    public NormalisingFrameProcessor (DetectionMethod inputDetectionMethod){
+        detectionMethod = inputDetectionMethod;
+    }
+
     @Override
     public IFrame process(IFrame inputFrame) {
 
-        inputFrame.setWindowMask(this.normaliseImageSize(inputFrame.getWindowMask()));
+        switch (detectionMethod){
+            case CANNY_EDGES:
+                inputFrame.setWindowMask(this.normaliseImageSize(inputFrame.getWindowMask()));
+            case SKELETON:
+                inputFrame.setMaskedImage(this.normaliseImageSize(inputFrame.getMaskedImage()));
+            case CONTOUR_MASK:
+                // do nothing
+            default:
+                // do nothing
+
+        }
 
         return inputFrame;
 

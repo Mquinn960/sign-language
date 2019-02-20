@@ -9,6 +9,8 @@ import org.opencv.imgproc.Imgproc;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import mquinn.sign_language.imaging.IFrame;
 import mquinn.sign_language.imaging.SkinColourProfile;
@@ -16,6 +18,7 @@ import mquinn.sign_language.imaging.SkinColourProfile;
 public class ColourThresholdFrameProcessor implements IFrameProcessor {
 
     private static double minContourArea = 0.1;
+    private static double minChildContourAreaMod = 0.025;
 
     private List<MatOfPoint> tempContours = new ArrayList<>();
     private List<MatOfPoint> outerContours = new ArrayList<>();
@@ -55,24 +58,35 @@ public class ColourThresholdFrameProcessor implements IFrameProcessor {
         // Gauss Blur
         Imgproc.GaussianBlur(mDilatedMask, mBlurredMask, new Size(1,1),0);
 
-        Imgproc.findContours(mBlurredMask, tempContours, mHierarchy, Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
+        Imgproc.findContours(mBlurredMask, tempContours, mHierarchy, Imgproc.RETR_CCOMP, Imgproc.CHAIN_APPROX_SIMPLE);
 
-        if (tempContours.size() > 0){
+        int maxContourIdx = 0;
+
+        if (tempContours.size() > 0) {
             double maxArea = 0;
-            Iterator<MatOfPoint> allContours = tempContours.iterator();
             MatOfPoint maxContour = new MatOfPoint();
-
-            while (allContours.hasNext()) {
-                MatOfPoint wrapper = allContours.next();
-                double area = Imgproc.contourArea(wrapper);
+            for (int i = 0; i < tempContours.size(); i++) {
+                MatOfPoint wrapper = tempContours.get(i);
+                double area = Imgproc.contourArea(tempContours.get(i));
                 if (area > maxArea) {
                     maxArea = area;
                     maxContour = wrapper;
+                    maxContourIdx = i;
                 }
             }
 
+            // Add the largest contour to the contours array
             if (Imgproc.contourArea(maxContour) > minContourArea * maxArea) {
                 outerContours.add(maxContour);
+            }
+
+            // Add child contours of the largest contour
+            for (int i = 0; i < mHierarchy.cols(); i++){
+                if (mHierarchy.get(0,i)[3] == maxContourIdx){
+                    if (Imgproc.contourArea(tempContours.get(i)) > minChildContourAreaMod * maxArea){
+                        outerContours.add(tempContours.get(i));
+                    }
+                }
             }
 
             inputFrame.setCountours(outerContours);

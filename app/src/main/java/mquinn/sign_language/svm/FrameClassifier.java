@@ -20,6 +20,10 @@ import mquinn.sign_language.imaging.IFrame;
 import mquinn.sign_language.processing.IFrameProcessor;
 
 import static org.opencv.core.Core.meanStdDev;
+import static org.opencv.core.Core.transpose;
+import static org.opencv.core.CvType.CV_32FC1;
+import static org.opencv.core.CvType.CV_32SC1;
+import static org.opencv.core.CvType.CV_64FC1;
 
 public class FrameClassifier implements IFrameProcessor {
 
@@ -55,37 +59,49 @@ public class FrameClassifier implements IFrameProcessor {
     }
 
     private void classify(){
+
+        pcaReduce();
+
         flattenFeatures();
         flatFeatures.convertTo(flatFeatures, CvType.CV_32F);
 
-        float response = svm.predict(flatFeatures);
-
-        svm.predict(flatFeatures, results, 0);
-
-        result = LetterClass.getLetter((int)response);
-        workingFrame.setLetterClass(result);
-
-        Imgproc.putText(workingFrame.getRGBA(),
-                workingFrame.getLetterClass().toString(),
-                new Point(100,180),
-                Core.FONT_HERSHEY_PLAIN,
-                2,
-                new Scalar(255,255,255),
-                2);
-
-        Log.d("DEBUG", "LETTER CLASS: " + result);
+//        float response = svm.predict(flatFeatures);
+//
+//        svm.predict(flatFeatures, results, 0);
+//
+//        result = LetterClass.getLetter((int)response);
+//        workingFrame.setLetterClass(result);
+//
+//        Imgproc.putText(workingFrame.getRGBA(),
+//                workingFrame.getLetterClass().toString(),
+//                new Point(100,180),
+//                Core.FONT_HERSHEY_PLAIN,
+//                2,
+//                new Scalar(255,255,255),
+//                2);
+//
+//        Log.d("DEBUG", "LETTER CLASS: " + result);
     }
 
     private boolean isEligibleToClassify() {
-        // SVM Prediction
+//        if (!workingFrame.getFeatures().isEmpty()) {
+//            Iterator<MatOfPoint> allMatOfPoint = workingFrame.getFeatures().iterator();
+//            while (allMatOfPoint.hasNext()) {
+//                MatOfPoint temp = allMatOfPoint.next();
+//                if (temp.toList().size() == 15){
+//                    features = temp;
+//                    return true;
+//                }
+//            }
+//        }
+//        return false;
+
+
         if (!workingFrame.getFeatures().isEmpty()) {
             Iterator<MatOfPoint> allMatOfPoint = workingFrame.getFeatures().iterator();
             while (allMatOfPoint.hasNext()) {
-                MatOfPoint temp = allMatOfPoint.next();
-                if (temp.toList().size() == 15){
-                    features = temp;
-                    return true;
-                }
+                features = allMatOfPoint.next();
+                return true;
             }
         }
         return false;
@@ -93,6 +109,48 @@ public class FrameClassifier implements IFrameProcessor {
 
     private void flattenFeatures(){
         flatFeatures = features.reshape(1,1);
+    }
+
+    private void pcaReduce () {
+        // features
+
+        Mat test = new Mat();
+
+        Mat mean = new Mat();
+        mean.convertTo(mean, CV_32FC1);
+
+        Mat vectors = new Mat();
+        vectors.convertTo(vectors, CV_32FC1);
+
+
+        test = features.reshape(1,features.rows());
+        test.convertTo(test, CV_32FC1);
+
+
+
+        Core.PCACompute(test, mean, vectors, 10);
+
+
+        Mat projectVec = new Mat();
+        projectVec.convertTo(projectVec, CV_32FC1);
+
+        Core.PCAProject(test, mean, vectors, projectVec);
+
+        Mat backProjectVec = new Mat();
+        backProjectVec.convertTo(backProjectVec, CV_32FC1);
+
+        Core.PCABackProject(test, mean, vectors, backProjectVec);
+
+        mean.release();
+        vectors.release();
+        projectVec.release();
+        backProjectVec.release();
+
+
+//        Core.PCAProject(x, new Mat(), new Mat(), y);
+
+
+//        return x;
     }
 
 //    private void normaliseFeatures(){
@@ -105,6 +163,8 @@ public class FrameClassifier implements IFrameProcessor {
 //            sigmas.push_back(sigma);
 //            features.col(i) = (features.col(i) - mean) / sigma;  //normalization
 //        }
+
+
 //    }
 
 }

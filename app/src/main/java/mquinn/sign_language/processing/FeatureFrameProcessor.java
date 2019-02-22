@@ -45,13 +45,13 @@ public class FeatureFrameProcessor implements IFrameProcessor {
 
                 featureInput = inputFrame.getMaskedImage();
                 Imgproc.cvtColor(inputFrame.getDownSampledMat(), greyScale, Imgproc.COLOR_RGBA2GRAY);
-                Imgproc.goodFeaturesToTrack(greyScale, features, 15, 0.015, 5, featureInput,3,3);
+                Imgproc.goodFeaturesToTrack(greyScale, features, 1000, 0.001, 1, featureInput,3,3);
 
                 break;
             case CANNY_EDGES:
 
                 featureInput = inputFrame.getCannyEdgeMask();
-                Imgproc.goodFeaturesToTrack(featureInput, features, 15, 0.015, 5);
+                Imgproc.goodFeaturesToTrack(featureInput, features, 1000, 0.001, 1);
 
                 break;
             default:

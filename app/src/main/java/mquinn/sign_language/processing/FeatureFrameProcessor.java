@@ -38,20 +38,20 @@ public class FeatureFrameProcessor implements IFrameProcessor {
             case SKELETON:
 
                 featureInput = inputFrame.getSkeleton();
-                Imgproc.goodFeaturesToTrack(featureInput, features, 15, 0.005, 8);
+                Imgproc.goodFeaturesToTrack(featureInput, features, 2000, 0.001, 1);
 
                 break;
             case CONTOUR_MASK:
 
                 featureInput = inputFrame.getMaskedImage();
                 Imgproc.cvtColor(inputFrame.getDownSampledMat(), greyScale, Imgproc.COLOR_RGBA2GRAY);
-                Imgproc.goodFeaturesToTrack(greyScale, features, 1000, 0.001, 1, featureInput,3,3);
+                Imgproc.goodFeaturesToTrack(greyScale, features, 2000, 0.001, 1, featureInput,3,3);
 
                 break;
             case CANNY_EDGES:
 
                 featureInput = inputFrame.getCannyEdgeMask();
-                Imgproc.goodFeaturesToTrack(featureInput, features, 1000, 0.001, 1);
+                Imgproc.goodFeaturesToTrack(featureInput, features, 2000, 0.001, 1);
 
                 break;
             default:

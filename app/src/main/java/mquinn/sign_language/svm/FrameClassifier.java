@@ -123,12 +123,18 @@ public class FrameClassifier implements IFrameProcessor {
         vectors.convertTo(vectors, CV_32FC1);
 
 
+        Mat values = new Mat();
+        values.convertTo(values, CV_32FC1);
+
+
         test = features.reshape(1,features.rows());
         test.convertTo(test, CV_32FC1);
 
 
 
-        Core.PCACompute(test, mean, vectors, 10);
+//        Core.PCACompute(test, mean, vectors, 10);
+
+        Core.PCACompute2(test, mean, vectors, values, 10);
 
 
         Mat projectVec = new Mat();

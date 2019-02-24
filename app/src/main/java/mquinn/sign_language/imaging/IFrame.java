@@ -51,4 +51,11 @@ public interface IFrame {
     Mat getSiftFeatures();
     void setSiftFeatures(Mat siftFeatures);
 
+    Mat getHuMomentFeat();
+    void setHuMomentFeat(Mat huMomentFeat);
+
+    Mat getHogDesc();
+    void setHogDesc(Mat hogDesc);
+
+
 }

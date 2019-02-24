@@ -51,36 +51,34 @@ public class FrameClassifier implements IFrameProcessor {
     @Override
     public IFrame process(IFrame inputFrame) {
         workingFrame = inputFrame;
-        if (isEligibleToClassify()) {
+//        if (isEligibleToClassify()) {
             classify();
-        }
+//        }
 
         return workingFrame;
     }
 
     private void classify(){
 
-        pcaReduce();
-
         flattenFeatures();
         flatFeatures.convertTo(flatFeatures, CvType.CV_32F);
 
-//        float response = svm.predict(flatFeatures);
-//
-//        svm.predict(flatFeatures, results, 0);
-//
-//        result = LetterClass.getLetter((int)response);
-//        workingFrame.setLetterClass(result);
-//
-//        Imgproc.putText(workingFrame.getRGBA(),
-//                workingFrame.getLetterClass().toString(),
-//                new Point(100,180),
-//                Core.FONT_HERSHEY_PLAIN,
-//                2,
-//                new Scalar(255,255,255),
-//                2);
-//
-//        Log.d("DEBUG", "LETTER CLASS: " + result);
+        float response = svm.predict(flatFeatures);
+
+        svm.predict(flatFeatures, results, 0);
+
+        result = LetterClass.getLetter((int)response);
+        workingFrame.setLetterClass(result);
+
+        Imgproc.putText(workingFrame.getRGBA(),
+                workingFrame.getLetterClass().toString(),
+                new Point(100,180),
+                Core.FONT_HERSHEY_PLAIN,
+                2,
+                new Scalar(255,255,255),
+                2);
+
+        Log.d("DEBUG", "LETTER CLASS: " + result);
     }
 
     private boolean isEligibleToClassify() {
@@ -108,56 +106,63 @@ public class FrameClassifier implements IFrameProcessor {
     }
 
     private void flattenFeatures(){
-        flatFeatures = features.reshape(1,1);
+//        flatFeatures = features.reshape(1,1);
+
+//        flatFeatures = workingFrame.getHuMomentFeat();
+//        flatFeatures = flatFeatures.reshape(1,1);
+
+        flatFeatures = workingFrame.getHogDesc();
+        flatFeatures = flatFeatures.reshape(1,1);
+
     }
-
-    private void pcaReduce () {
-        // features
-
-        Mat test = new Mat();
-
-        Mat mean = new Mat();
-        mean.convertTo(mean, CV_32FC1);
-
-        Mat vectors = new Mat();
-        vectors.convertTo(vectors, CV_32FC1);
-
-
-        Mat values = new Mat();
-        values.convertTo(values, CV_32FC1);
-
-
-        test = features.reshape(1,features.rows());
-        test.convertTo(test, CV_32FC1);
-
-
-
-//        Core.PCACompute(test, mean, vectors, 10);
-
-        Core.PCACompute2(test, mean, vectors, values, 10);
-
-
-        Mat projectVec = new Mat();
-        projectVec.convertTo(projectVec, CV_32FC1);
-
-        Core.PCAProject(test, mean, vectors, projectVec);
-
-        Mat backProjectVec = new Mat();
-        backProjectVec.convertTo(backProjectVec, CV_32FC1);
-
-        Core.PCABackProject(test, mean, vectors, backProjectVec);
-
-        mean.release();
-        vectors.release();
-        projectVec.release();
-        backProjectVec.release();
+//
+//    private void pcaReduce () {
+//        // features
+//
+//        Mat test = new Mat();
+//
+//        Mat mean = new Mat();
+//        mean.convertTo(mean, CV_32FC1);
+//
+//        Mat vectors = new Mat();
+//        vectors.convertTo(vectors, CV_32FC1);
+//
+//
+//        Mat values = new Mat();
+//        values.convertTo(values, CV_32FC1);
+//
+//
+//        test = features.reshape(1,features.rows());
+//        test.convertTo(test, CV_32FC1);
+//
+//
+//
+////        Core.PCACompute(test, mean, vectors, 10);
+//
+//        Core.PCACompute2(test, mean, vectors, values, 10);
+//
+//
+//        Mat projectVec = new Mat();
+//        projectVec.convertTo(projectVec, CV_32FC1);
+//
+//        Core.PCAProject(test, mean, vectors, projectVec);
+//
+//        Mat backProjectVec = new Mat();
+//        backProjectVec.convertTo(backProjectVec, CV_32FC1);
+//
+//        Core.PCABackProject(test, mean, vectors, backProjectVec);
+//
+//        mean.release();
+//        vectors.release();
+//        projectVec.release();
+//        backProjectVec.release();
 
 
 //        Core.PCAProject(x, new Mat(), new Mat(), y);
 
 
-//        return x;
-    }
+///       return x;
+//    }
 
 //    private void normaliseFeatures(){
 //        MatOfDouble means = new MatOfDouble(), sigmas = new MatOfDouble();  //matrices to save all the means and standard deviations

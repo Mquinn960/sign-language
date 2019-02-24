@@ -51,6 +51,10 @@ public class Frame extends Mat implements IFrame {
 
     private Mat siftFeatures;
 
+    private Mat huMomentFeat;
+
+    private Mat hogDesc;
+
     public Frame(Mat inputRGBA) {
         rGBA = inputRGBA;
     }
@@ -183,5 +187,25 @@ public class Frame extends Mat implements IFrame {
     @Override
     public void setSiftFeatures(Mat siftFeatures) {
         this.siftFeatures = siftFeatures;
+    }
+
+    @Override
+    public Mat getHuMomentFeat() {
+        return huMomentFeat;
+    }
+
+    @Override
+    public void setHuMomentFeat(Mat huMomentFeat) {
+        this.huMomentFeat = huMomentFeat;
+    }
+
+    @Override
+    public Mat getHogDesc() {
+        return hogDesc;
+    }
+
+    @Override
+    public void setHogDesc(Mat hogDesc) {
+        this.hogDesc = hogDesc;
     }
 }

@@ -1,8 +1,10 @@
 <resources>
     <string name="app_name">Sign Language</string>
 
-    <string name="str_button_skeleton">Skeleton</string>
-    <string name="str_button_mask">Mask</string>
-    <string name="str_button_canny">Canny</string>
+
+    <string name="str_button_add">Add</string>
+    <string name="str_button_clear">Clear</string>
+
+    <string name="txtvw_word"> </string>
 
 </resources>

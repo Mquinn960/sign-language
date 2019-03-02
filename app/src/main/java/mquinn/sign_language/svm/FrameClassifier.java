@@ -12,6 +12,7 @@ import org.opencv.core.Scalar;
 import org.opencv.core.TermCriteria;
 import org.opencv.imgproc.Imgproc;
 import org.opencv.ml.SVM;
+import org.opencv.ml.StatModel;
 
 import java.io.File;
 import java.util.Iterator;
@@ -64,19 +65,19 @@ public class FrameClassifier implements IFrameProcessor {
         flatFeatures.convertTo(flatFeatures, CvType.CV_32F);
 
         float response = svm.predict(flatFeatures);
-
-        svm.predict(flatFeatures, results, 0);
+//
+//        svm.predict(flatFeatures, results, StatModel.RAW_OUTPUT);
 
         result = LetterClass.getLetter((int)response);
         workingFrame.setLetterClass(result);
 
-        Imgproc.putText(workingFrame.getRGBA(),
-                workingFrame.getLetterClass().toString(),
-                new Point(100,180),
-                Core.FONT_HERSHEY_PLAIN,
-                2,
-                new Scalar(255,255,255),
-                2);
+//        Imgproc.putText(workingFrame.getRGBA(),
+//                workingFrame.getLetterClass().toString(),
+//                new Point(130,210),
+//                Core.FONT_HERSHEY_PLAIN,
+//                4,
+//                new Scalar(255,0,0),
+//                2);
 
         Log.d("DEBUG", "LETTER CLASS: " + result);
     }

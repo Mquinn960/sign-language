@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.TextView;
 
 import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.CameraBridgeViewBase;
@@ -40,6 +41,7 @@ import mquinn.sign_language.processing.preprocessing.InputFramePreProcessor;
 import mquinn.sign_language.rendering.IRenderer;
 import mquinn.sign_language.rendering.MainRenderer;
 import mquinn.sign_language.svm.FrameClassifier;
+import mquinn.sign_language.svm.LetterClass;
 
 public class MainActivity extends Activity implements CvCameraViewListener2 {
 
@@ -53,7 +55,10 @@ public class MainActivity extends Activity implements CvCameraViewListener2 {
 
     private IRenderer mainRenderer;
 
-    private Button btnCanny, btnMask, btnSkeleton;
+    private Button btnAdd, btnClear;
+    private TextView txtView;
+
+    private String currentLetter;
 
     private DetectionMethod detectionMethod;
 
@@ -95,34 +100,29 @@ public class MainActivity extends Activity implements CvCameraViewListener2 {
             ActivityCompat.requestPermissions(this, new String[] {Manifest.permission.CAMERA}, 1);
         }
 
-        btnCanny = (Button) findViewById(R.id.button_canny);
-        btnMask = (Button) findViewById(R.id.button_mask);
-        btnSkeleton = (Button) findViewById(R.id.button_skeleton);
+        btnAdd = (Button) findViewById(R.id.button_add);
+        btnClear = (Button) findViewById(R.id.button_clear);
+        txtView = (TextView) findViewById(R.id.textView);
 
-        btnCanny.setOnClickListener(new View.OnClickListener()
+
+        btnAdd.setOnClickListener(new View.OnClickListener()
         {
             @Override
             public void onClick(View v)
             {
-                setProcessors(DetectionMethod.CANNY_EDGES);
+                txtView.append(currentLetter);
+
             };
         });
-        btnMask.setOnClickListener(new View.OnClickListener()
+        btnClear.setOnClickListener(new View.OnClickListener()
         {
             @Override
             public void onClick(View v)
             {
-                setProcessors(DetectionMethod.CONTOUR_MASK);
+                txtView.setText("");
             };
         });
-        btnSkeleton.setOnClickListener(new View.OnClickListener()
-        {
-            @Override
-            public void onClick(View v)
-            {
-                setProcessors(DetectionMethod.SKELETON);
-            };
-        });
+
 
     }
 
@@ -140,8 +140,10 @@ public class MainActivity extends Activity implements CvCameraViewListener2 {
         // Actual frame classification
         classifiedFrame = frameClassifier.process(postProcessedFrame);
 
-        // Display anything required
-        mainRenderer.display(postProcessedFrame);
+        currentLetter = getDisplayableLetter(postProcessedFrame.getLetterClass().toString());
+
+//        // Display anything required
+//        mainRenderer.display(postProcessedFrame);
 
         // Return processed Mat
         return postProcessedFrame.getRGBA();
@@ -209,6 +211,14 @@ public class MainActivity extends Activity implements CvCameraViewListener2 {
                             new UpScalingFramePostProcessor(),
                             new ResizingFrameProcessor(SizeOperation.UP)
                         );
+    }
+
+    private String getDisplayableLetter(String letter){
+        if (letter.length() == 1){
+            return letter;
+        } else {
+            return "";
+        }
     }
 
     private File initialiseXMLTrainingData(){

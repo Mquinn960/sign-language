@@ -37,6 +37,12 @@ public class FeatureFrameProcessor implements IFrameProcessor {
     private Moments mom = new Moments();
     private Mat huNorm = new Mat();
 
+    private MatOfFloat hogDesc = new MatOfFloat();
+    private MatOfPoint hogLoc = new MatOfPoint();
+
+    private MatOfKeyPoint siftKeys = new MatOfKeyPoint();
+    private Mat siftDesc = new Mat();
+
     public FeatureFrameProcessor(DetectionMethod inputDetectionMethod) {
         detectionMethod = inputDetectionMethod;
     }
@@ -89,8 +95,6 @@ public class FeatureFrameProcessor implements IFrameProcessor {
                     huNorm.put(i,0, y);
                 }
 
-                MatOfFloat x = new MatOfFloat();
-                MatOfPoint y = new MatOfPoint();
                 HOGDescriptor hog = new HOGDescriptor(
                     new Size(20,20), //winSize
                     new Size(10,10), //blocksize
@@ -106,9 +110,21 @@ public class FeatureFrameProcessor implements IFrameProcessor {
                         true);
 
 
-                hog.compute(inputFrame.getWindowMask(), x, new Size(32,32),new Size(0,0), y);
+//                hog.compute(inputFrame.getWindowMask(), hogDesc, new Size(32,32),new Size(0,0), hogLoc);
 
-                inputFrame.setHogDesc(x);
+
+                hog.compute(inputFrame.getCannyEdgeMask(), hogDesc, new Size(32,32),new Size(0,0), hogLoc);
+
+
+                inputFrame.setHogDesc(hogDesc);
+
+//                SURF a = SURF.create();
+//                SIFT b = SIFT.create(200);
+
+//                b.detectAndCompute(inputFrame.getWindowMask(), new Mat(), siftKeys, siftDesc);
+
+
+
 
 //                MatOfKeyPoint objectKeyPoints = new MatOfKeyPoint();
 //                FeatureDetector featureDetector = FeatureDetector.create(FeatureDetector.SURF);

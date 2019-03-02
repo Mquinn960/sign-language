@@ -12,37 +12,103 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:gravity="right"
-        android:layout_weight="1">
+        android:orientation="vertical">
 
-        <Button
-            android:layout_width="150dp"
+        <Space
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/str_button_canny"
-            android:id="@+id/button_canny"
-            android:layout_weight="1"
-            android:layout_marginTop="40dp"/>
+            android:layout_weight="5"/>
 
-        <Button
-            android:layout_width="150dp"
-            android:layout_height="wrap_content"
-            android:text="@string/str_button_mask"
-            android:id="@+id/button_mask"
-            android:layout_weight="1"
-            android:layout_marginTop="20dp"
-            android:layout_marginBottom="20dp"/>
 
-        <Button
-            android:layout_width="150dp"
+
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/str_button_skeleton"
-            android:id="@+id/button_skeleton"
-            android:layout_weight="1"
-            android:layout_marginBottom="40dp"/>
+            android:gravity="bottom"
+            android:orientation="horizontal">
+
+            <Space
+                android:layout_width="545dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="140" />
+
+            <Button
+                android:id="@+id/button_add"
+                android:layout_width="wrap_content"
+                android:layout_height="72dp"
+                android:layout_gravity="end"
+                android:layout_weight="20"
+                android:background="@color/colorPrimaryDark"
+                android:text="@string/str_button_add"
+                android:textColor="@color/colorAccent" />
+
+            <Space
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="20" />
+
+
+        </LinearLayout>
+
+
+
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="5" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="bottom"
+            android:orientation="horizontal">
+
+            <Space
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="20" />
+
+            <TextView
+                android:id="@+id/textView"
+                android:layout_width="545dp"
+                android:layout_height="44dp"
+                android:layout_weight="100"
+                android:gravity="center"
+                android:text="@string/txtvw_word"
+                android:textColor="@color/colorAccent"
+                android:textSize="24sp" />
+
+            <Space
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="20" />
+
+            <Button
+                android:id="@+id/button_clear"
+                android:layout_width="wrap_content"
+                android:layout_height="72dp"
+                android:layout_weight="20"
+                android:background="@color/colorPrimaryDark"
+                android:text="@string/str_button_clear"
+                android:textColor="@color/colorAccent" />
+
+            <Space
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="20" />
+
+
+        </LinearLayout>
+
+        <Space
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
 
     </LinearLayout>
-
 
 
 </FrameLayout>

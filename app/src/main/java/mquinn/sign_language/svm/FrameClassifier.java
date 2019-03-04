@@ -65,36 +65,14 @@ public class FrameClassifier implements IFrameProcessor {
         flatFeatures.convertTo(flatFeatures, CvType.CV_32F);
 
         float response = svm.predict(flatFeatures);
-//
-//        svm.predict(flatFeatures, results, StatModel.RAW_OUTPUT);
 
         result = LetterClass.getLetter((int)response);
         workingFrame.setLetterClass(result);
-
-//        Imgproc.putText(workingFrame.getRGBA(),
-//                workingFrame.getLetterClass().toString(),
-//                new Point(130,210),
-//                Core.FONT_HERSHEY_PLAIN,
-//                4,
-//                new Scalar(255,0,0),
-//                2);
 
         Log.d("DEBUG", "LETTER CLASS: " + result);
     }
 
     private boolean isEligibleToClassify() {
-//        if (!workingFrame.getFeatures().isEmpty()) {
-//            Iterator<MatOfPoint> allMatOfPoint = workingFrame.getFeatures().iterator();
-//            while (allMatOfPoint.hasNext()) {
-//                MatOfPoint temp = allMatOfPoint.next();
-//                if (temp.toList().size() == 15){
-//                    features = temp;
-//                    return true;
-//                }
-//            }
-//        }
-//        return false;
-
 
         if (!workingFrame.getFeatures().isEmpty()) {
             Iterator<MatOfPoint> allMatOfPoint = workingFrame.getFeatures().iterator();
@@ -116,6 +94,8 @@ public class FrameClassifier implements IFrameProcessor {
         flatFeatures = flatFeatures.reshape(1,1);
 
     }
+
+
 //
 //    private void pcaReduce () {
 //        // features
@@ -143,6 +123,7 @@ public class FrameClassifier implements IFrameProcessor {
 //        Core.PCACompute2(test, mean, vectors, values, 10);
 //
 //
+
 //        Mat projectVec = new Mat();
 //        projectVec.convertTo(projectVec, CV_32FC1);
 //

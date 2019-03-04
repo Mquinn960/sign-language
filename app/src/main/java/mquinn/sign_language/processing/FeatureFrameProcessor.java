@@ -96,47 +96,24 @@ public class FeatureFrameProcessor implements IFrameProcessor {
                 }
 
                 HOGDescriptor hog = new HOGDescriptor(
-                    new Size(20,20), //winSize
-                    new Size(10,10), //blocksize
-                    new Size(5,5), //blockStride,
-                    new Size(10,10), //cellSize,
+                    new Size(32,32), //winSize
+                    new Size(16,16), //blocksize
+                    new Size(8,8), //blockStride,
+                    new Size(8,8), //cellSize,
                     9, //nbins,
                     1, //derivAper,
                     -1, //winSigma,
-                    0, //histogramNormType,
+                    HOGDescriptor.L2Hys, //histogramNormType,
                     0.2, //L2HysThresh,
                     true,//gammal correction,
-                    64,//nlevels=64
+                    HOGDescriptor.DEFAULT_NLEVELS,//nlevels=64
                         true);
 
+                hog.compute(inputFrame.getCannyEdgeMask(), hogDesc, new Size(32,32),new Size(16,16), hogLoc);
 
-//                hog.compute(inputFrame.getWindowMask(), hogDesc, new Size(32,32),new Size(0,0), hogLoc);
-
-
-                hog.compute(inputFrame.getCannyEdgeMask(), hogDesc, new Size(32,32),new Size(0,0), hogLoc);
 
 
                 inputFrame.setHogDesc(hogDesc);
-
-//                SURF a = SURF.create();
-//                SIFT b = SIFT.create(200);
-
-//                b.detectAndCompute(inputFrame.getWindowMask(), new Mat(), siftKeys, siftDesc);
-
-
-
-
-//                MatOfKeyPoint objectKeyPoints = new MatOfKeyPoint();
-//                FeatureDetector featureDetector = FeatureDetector.create(FeatureDetector.SURF);
-//                System.out.println("Detecting key points...");
-//                featureDetector.detect(objectImage, objectKeyPoints);
-//                KeyPoint[] keypoints = objectKeyPoints.toArray();
-//                System.out.println(keypoints);
-//
-//                MatOfKeyPoint objectDescriptors = new MatOfKeyPoint();
-//                DescriptorExtractor descriptorExtractor = DescriptorExtractor.create(DescriptorExtractor.SURF);
-//                System.out.println("Computing descriptors...");
-//                descriptorExtractor.compute(objectImage, objectKeyPoints, objectDescriptors);
 
                 break;
             default:

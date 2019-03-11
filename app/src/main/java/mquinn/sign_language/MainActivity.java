@@ -140,7 +140,7 @@ public class MainActivity extends Activity implements CvCameraViewListener2 {
         // Actual frame classification
         classifiedFrame = frameClassifier.process(postProcessedFrame);
 
-        currentLetter = getDisplayableLetter(postProcessedFrame.getLetterClass().toString());
+//        currentLetter = getDisplayableLetter(postProcessedFrame.getLetterClass().toString());
 
 //        // Display anything required
 //        mainRenderer.display(postProcessedFrame);
@@ -199,7 +199,7 @@ public class MainActivity extends Activity implements CvCameraViewListener2 {
         preProcessor = new InputFramePreProcessor(
                             new CameraFrameAdapter(
                                 new DownSamplingFrameProcessor(),
-                                new ResizingFrameProcessor(SizeOperation.DOWN)
+                                new ResizingFrameProcessor(SizeOperation.UP)
                             )
                         );
 

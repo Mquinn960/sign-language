@@ -43,8 +43,24 @@ public class FeatureFrameProcessor implements IFrameProcessor {
     private MatOfKeyPoint siftKeys = new MatOfKeyPoint();
     private Mat siftDesc = new Mat();
 
+    private HOGDescriptor hog;
+
     public FeatureFrameProcessor(DetectionMethod inputDetectionMethod) {
         detectionMethod = inputDetectionMethod;
+
+        hog = new HOGDescriptor(
+                new Size(32,32), //winSize
+                new Size(16,16), //blocksize
+                new Size(8,8), //blockStride,
+                new Size(8,8), //cellSize,
+                9, //nbins,
+                1, //derivAper,
+                -1, //winSigma,
+                HOGDescriptor.L2Hys, //histogramNormType,
+                0.2, //L2HysThresh,
+                true,//gammal correction,
+                HOGDescriptor.DEFAULT_NLEVELS,//nlevels=64
+                true);
     }
 
     @Override
@@ -56,64 +72,16 @@ public class FeatureFrameProcessor implements IFrameProcessor {
             case SKELETON:
 
                 featureInput = inputFrame.getSkeleton();
-                Imgproc.goodFeaturesToTrack(featureInput, features, 15, 0.001, 5);
-
-                mom = Imgproc.moments(inputFrame.getSkeleton());
-                Imgproc.HuMoments(mom, huMoments);
-
-                huMoments.copyTo(huNorm);
-
-                for(int i = 0; i < 7; i++)
-                {
-                    double x = huMoments.get(i,0)[0];
-                    double y = -1 * Math.copySign(1.0, x) * Math.log10(Math.abs(x));
-                    huNorm.put(i,0, y);
-                }
 
                 break;
             case CONTOUR_MASK:
 
                 featureInput = inputFrame.getMaskedImage();
-                Imgproc.cvtColor(inputFrame.getDownSampledMat(), greyScale, Imgproc.COLOR_RGBA2GRAY);
-                Imgproc.goodFeaturesToTrack(greyScale, features, 15, 0.001, 5, featureInput,3,3);
 
                 break;
             case CANNY_EDGES:
 
                 featureInput = inputFrame.getCannyEdgeMask();
-                Imgproc.goodFeaturesToTrack(featureInput, features, 15, 0.001, 5);
-
-                mom = Imgproc.moments(inputFrame.getCannyEdgeMask());
-                Imgproc.HuMoments(mom, huMoments);
-
-                huMoments.copyTo(huNorm);
-
-                for(int i = 0; i < 7; i++)
-                {
-                    double x = huMoments.get(i,0)[0];
-                    double y = -1 * Math.copySign(1.0, x) * Math.log10(Math.abs(x));
-                    huNorm.put(i,0, y);
-                }
-
-                HOGDescriptor hog = new HOGDescriptor(
-                    new Size(32,32), //winSize
-                    new Size(16,16), //blocksize
-                    new Size(8,8), //blockStride,
-                    new Size(8,8), //cellSize,
-                    9, //nbins,
-                    1, //derivAper,
-                    -1, //winSigma,
-                    HOGDescriptor.L2Hys, //histogramNormType,
-                    0.2, //L2HysThresh,
-                    true,//gammal correction,
-                    HOGDescriptor.DEFAULT_NLEVELS,//nlevels=64
-                        true);
-
-                hog.compute(inputFrame.getCannyEdgeMask(), hogDesc, new Size(32,32),new Size(16,16), hogLoc);
-
-
-
-                inputFrame.setHogDesc(hogDesc);
 
                 break;
             default:
@@ -121,7 +89,9 @@ public class FeatureFrameProcessor implements IFrameProcessor {
                 break;
         }
 
-        inputFrame.setHuMomentFeat(huNorm);
+        hog.compute(featureInput, hogDesc, new Size(32,32),new Size(16,16), hogLoc);
+        inputFrame.setHogDesc(hogDesc);
+
         featureList.add(features);
         inputFrame.setFeatures(featureList);
 

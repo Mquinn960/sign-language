@@ -53,7 +53,7 @@ public class FrameClassifier implements IFrameProcessor {
     public IFrame process(IFrame inputFrame) {
         workingFrame = inputFrame;
 //        if (isEligibleToClassify()) {
-            classify();
+//            classify();
 //        }
 
         return workingFrame;
@@ -86,9 +86,6 @@ public class FrameClassifier implements IFrameProcessor {
 
     private void flattenFeatures(){
 //        flatFeatures = features.reshape(1,1);
-
-//        flatFeatures = workingFrame.getHuMomentFeat();
-//        flatFeatures = flatFeatures.reshape(1,1);
 
         flatFeatures = workingFrame.getHogDesc();
         flatFeatures = flatFeatures.reshape(1,1);
@@ -144,20 +141,6 @@ public class FrameClassifier implements IFrameProcessor {
 
 
 ///       return x;
-//    }
-
-//    private void normaliseFeatures(){
-//        MatOfDouble means = new MatOfDouble(), sigmas = new MatOfDouble();  //matrices to save all the means and standard deviations
-//        for (int i = 0; i < features.cols(); i++){  //take each of the features in vector
-//            MatOfDouble mean = new MatOfDouble();
-//            MatOfDouble sigma = new MatOfDouble();
-//            meanStdDev(features.col(i), mean, sigma);  //get mean and std deviation
-//            means.push_back(mean);
-//            sigmas.push_back(sigma);
-//            features.col(i) = (features.col(i) - mean) / sigma;  //normalization
-//        }
-
-
 //    }
 
 }

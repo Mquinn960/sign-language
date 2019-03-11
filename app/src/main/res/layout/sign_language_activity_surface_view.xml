@@ -39,7 +39,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="72dp"
                 android:layout_gravity="end"
-                android:layout_weight="20"
+                android:layout_weight="20020"
                 android:background="@color/colorPrimaryDark"
                 android:text="@string/str_button_add"
                 android:textColor="@color/colorAccent" />

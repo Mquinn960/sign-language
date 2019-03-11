@@ -27,6 +27,7 @@ public class MainFrameProcessor implements IFrameProcessor {
         processors.clear();
         processors.add(new ColourThresholdFrameProcessor(method));
         processors.add(new ContourMaskProcessor());
+        processors.add(new CroppingFrameProcessor(method));
         processors.add(new NormalisingFrameProcessor(method));
         switch (method){
             case CANNY_EDGES:

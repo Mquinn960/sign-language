@@ -2,13 +2,14 @@ package mquinn.sign_language.processing;
 
 import org.opencv.core.Mat;
 import org.opencv.core.Rect;
+import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.Imgproc;
 
 import mquinn.sign_language.imaging.IFrame;
 
 public class NormalisingFrameProcessor implements IFrameProcessor {
 
-    private int target_width = 200;
+    private int target_width = 100;
 
     private DetectionMethod detectionMethod;
 

@@ -27,16 +27,19 @@ public class CannyEdgeFrameProcessor implements IFrameProcessor {
         croppedMask = inputFrame.getWindowMask();
 
         Imgproc.GaussianBlur(croppedMask, croppedMask, new Size(1,1), 0);
-        Imgproc.Canny(croppedMask, cannyEdgeMask, 100, 200);
+
+//        Imgproc.Canny(croppedMask, cannyEdgeMask, 50, 100);
+
+        Mat otsu = new Mat();
 
         // Auto Otsu threshold
-//        double otsuThreshValue = Imgproc.threshold(croppedMask, otsuThreshold, 0, 255, Imgproc.THRESH_BINARY | Imgproc.THRESH_OTSU);
-//        Imgproc.Canny(croppedMask, cannyEdgeMask, otsuThreshValue * 0.3, otsuThreshValue);
+        double otsuThreshValue = Imgproc.threshold(croppedMask, otsu, 0, 255, Imgproc.THRESH_BINARY | Imgproc.THRESH_OTSU);
+        Imgproc.Canny(croppedMask, cannyEdgeMask, otsuThreshValue * 0.3, otsuThreshValue);
 
         Imgproc.findContours(cannyEdgeMask,
                 cannyEdges,
                 hierarchy,
-                Imgproc.RETR_EXTERNAL,
+                Imgproc.RETR_CCOMP,
                 Imgproc.CHAIN_APPROX_SIMPLE);
 
         inputFrame.setCannyEdgeMask(cannyEdgeMask);

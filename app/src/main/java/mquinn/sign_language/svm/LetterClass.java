@@ -29,6 +29,7 @@ public enum LetterClass {
     X(24),
     Y(25),
     Z(26), // Won't be used
+    SPACE(90),
     ERROR(99);
 
     private int letterIndex;

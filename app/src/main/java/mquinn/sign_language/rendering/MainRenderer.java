@@ -36,12 +36,6 @@ public class MainRenderer implements IRenderer {
                 break;
         }
 
-        setDefaultRenderers();
-
-    }
-
-    private void setDefaultRenderers(){
-        renderers.add(new FeatureRenderer());
     }
 
 }

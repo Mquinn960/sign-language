@@ -53,7 +53,7 @@ public class FrameClassifier implements IFrameProcessor {
     public IFrame process(IFrame inputFrame) {
         workingFrame = inputFrame;
 //        if (isEligibleToClassify()) {
-//            classify();
+            classify();
 //        }
 
         return workingFrame;

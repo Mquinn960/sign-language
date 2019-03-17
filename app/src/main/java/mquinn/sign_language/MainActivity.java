@@ -21,6 +21,7 @@ import org.opencv.android.CameraBridgeViewBase.CvCameraViewListener2;
 import org.opencv.android.LoaderCallbackInterface;
 import org.opencv.android.OpenCVLoader;
 import org.opencv.core.Mat;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
@@ -41,7 +42,6 @@ import mquinn.sign_language.processing.preprocessing.InputFramePreProcessor;
 import mquinn.sign_language.rendering.IRenderer;
 import mquinn.sign_language.rendering.MainRenderer;
 import mquinn.sign_language.svm.FrameClassifier;
-import mquinn.sign_language.svm.LetterClass;
 
 public class MainActivity extends Activity implements CvCameraViewListener2 {
 
@@ -55,10 +55,10 @@ public class MainActivity extends Activity implements CvCameraViewListener2 {
 
     private IRenderer mainRenderer;
 
-    private Button btnAdd, btnClear;
+    private Button btnAdd, btnClear, btnBack;
     private TextView txtView;
 
-    private String currentLetter;
+    private String currentLetter, previousLetter, modLetter;
 
     private DetectionMethod detectionMethod;
 
@@ -102,6 +102,7 @@ public class MainActivity extends Activity implements CvCameraViewListener2 {
 
         btnAdd = (Button) findViewById(R.id.button_add);
         btnClear = (Button) findViewById(R.id.button_clear);
+        btnBack = (Button) findViewById(R.id.button_back);
         txtView = (TextView) findViewById(R.id.textView);
 
 
@@ -110,9 +111,9 @@ public class MainActivity extends Activity implements CvCameraViewListener2 {
             @Override
             public void onClick(View v)
             {
-                txtView.append(currentLetter);
 
-            };
+                txtView.append(currentLetter);
+            }
         });
         btnClear.setOnClickListener(new View.OnClickListener()
         {
@@ -120,7 +121,15 @@ public class MainActivity extends Activity implements CvCameraViewListener2 {
             public void onClick(View v)
             {
                 txtView.setText("");
-            };
+            }
+        });
+        btnBack.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                txtView.setText(txtView.getText().toString().substring(0, txtView.getText().toString().length() - 1));
+            }
         });
 
 
@@ -140,7 +149,10 @@ public class MainActivity extends Activity implements CvCameraViewListener2 {
         // Actual frame classification
         classifiedFrame = frameClassifier.process(postProcessedFrame);
 
+        previousLetter = currentLetter;
         currentLetter = getDisplayableLetter(classifiedFrame.getLetterClass().toString());
+
+        setLetterIfChanged();
 
         // Display anything required
 //        mainRenderer.display(postProcessedFrame);
@@ -174,9 +186,11 @@ public class MainActivity extends Activity implements CvCameraViewListener2 {
             mOpenCvCameraView.disableView();
     }
 
+
+
     public void onCameraViewStarted(int width, int height) {
 
-        setProcessors(DetectionMethod.CONTOUR_MASK);
+        setProcessors(DetectionMethod.CANNY_EDGES);
 
         File xmlFile = initialiseXMLTrainingData();
 
@@ -211,6 +225,32 @@ public class MainActivity extends Activity implements CvCameraViewListener2 {
                             new UpScalingFramePostProcessor(),
                             new ResizingFrameProcessor(SizeOperation.UP)
                         );
+    }
+
+    private void setLetterIfChanged(){
+        if (!currentLetter.equals(previousLetter)){
+            modLetter = currentLetter;
+            if (modLetter.equals("NONE"))
+                modLetter = "?";
+            if (modLetter.equals("SPACE"))
+                modLetter = " ";
+            setPossibleLetter(modLetter);
+        }
+    }
+
+    private void setPossibleLetter(final String currentLetter){
+
+        runOnUiThread(new Runnable() {
+
+            @Override
+            public void run() {
+
+                if (txtView.getText().toString().length() > 0)
+                    txtView.setText(txtView.getText().toString().substring(0, txtView.getText().toString().length() - 1));
+                txtView.append(currentLetter);
+
+            }
+        });
     }
 
     private String getDisplayableLetter(String letter){

@@ -23,10 +23,13 @@ public class NormalisingFrameProcessor implements IFrameProcessor {
         switch (detectionMethod){
             case CANNY_EDGES:
                 inputFrame.setWindowMask(this.normaliseImageSize(inputFrame.getWindowMask()));
+                break;
             case SKELETON:
                 inputFrame.setMaskedImage(this.normaliseImageSize(inputFrame.getMaskedImage()));
+                break;
             case CONTOUR_MASK:
-                // do nothing
+                inputFrame.setWindowMask(this.normaliseImageSize(inputFrame.getWindowMask()));
+                break;
             default:
                 // do nothing
 

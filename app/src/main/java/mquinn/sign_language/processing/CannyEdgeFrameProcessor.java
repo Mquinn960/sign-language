@@ -2,10 +2,8 @@ package mquinn.sign_language.processing;
 
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
-import org.opencv.core.Scalar;
 import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
-import org.opencv.imgproc.Moments;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,6 +26,7 @@ public class CannyEdgeFrameProcessor implements IFrameProcessor {
 
         Imgproc.GaussianBlur(croppedMask, croppedMask, new Size(1,1), 0);
 
+//      Manual Threshold
 //        Imgproc.Canny(croppedMask, cannyEdgeMask, 50, 100);
 
         Mat otsu = new Mat();

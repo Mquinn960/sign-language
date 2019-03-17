@@ -1,24 +1,13 @@
 package mquinn.sign_language.processing;
 
-import android.util.Log;
-
-import org.opencv.core.KeyPoint;
+import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfDouble;
 import org.opencv.core.MatOfFloat;
-import org.opencv.core.MatOfKeyPoint;
 import org.opencv.core.MatOfPoint;
 import org.opencv.core.Size;
-import org.opencv.features2d.DescriptorExtractor;
-import org.opencv.features2d.FeatureDetector;
-import org.opencv.imgproc.Imgproc;
-import org.opencv.imgproc.Moments;
 import org.opencv.objdetect.HOGDescriptor;
-import org.opencv.xfeatures2d.SIFT;
-import org.opencv.xfeatures2d.SURF;
-import org.opencv.ximgproc.Ximgproc;
 
-import java.io.Console;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,17 +20,12 @@ public class FeatureFrameProcessor implements IFrameProcessor {
     private Mat greyScale = new Mat();
     private Mat featureInput = new Mat();
     private DetectionMethod detectionMethod;
-    private MatOfDouble weights = new MatOfDouble();
-
-    private Mat huMoments = new Mat();
-    private Moments mom = new Moments();
-    private Mat huNorm = new Mat();
 
     private MatOfFloat hogDesc = new MatOfFloat();
     private MatOfPoint hogLoc = new MatOfPoint();
 
-    private MatOfKeyPoint siftKeys = new MatOfKeyPoint();
-    private Mat siftDesc = new Mat();
+//    private List<Mat> hogList = new ArrayList<Mat>();
+//    private MatOfFloat hogDescFull = new MatOfFloat();
 
     private HOGDescriptor hog;
 
@@ -67,6 +51,8 @@ public class FeatureFrameProcessor implements IFrameProcessor {
     public IFrame process(IFrame inputFrame) {
 
         featureList.clear();
+        hogDesc.release();
+        hogLoc.release();
 
         switch (detectionMethod){
             case SKELETON:
@@ -76,7 +62,7 @@ public class FeatureFrameProcessor implements IFrameProcessor {
                 break;
             case CONTOUR_MASK:
 
-                featureInput = inputFrame.getMaskedImage();
+                featureInput = inputFrame.getWindowMask();
 
                 break;
             case CANNY_EDGES:
@@ -89,11 +75,22 @@ public class FeatureFrameProcessor implements IFrameProcessor {
                 break;
         }
 
+//        // COMBO
+//        hog.compute(inputFrame.getSkeleton(), hogDesc1, new Size(32,32),new Size(16,16), hogLoc1);
+//        hog.compute(inputFrame.getCannyEdgeMask(), hogDesc2, new Size(32,32),new Size(16,16), hogLoc2);
+//
+//        hogList.add((Mat)hogDesc1);
+//        hogList.add((Mat)hogDesc2);
+//
+//        Core.vconcat(hogList, hogDescFull);
+//
+//        inputFrame.setHogDesc(hogDescFull);
+
         hog.compute(featureInput, hogDesc, new Size(32,32),new Size(16,16), hogLoc);
         inputFrame.setHogDesc(hogDesc);
 
-        featureList.add(features);
-        inputFrame.setFeatures(featureList);
+//        featureList.add(features);
+//        inputFrame.setFeatures(featureList);
 
         return inputFrame;
 

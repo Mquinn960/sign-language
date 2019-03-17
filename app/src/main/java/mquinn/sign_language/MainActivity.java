@@ -140,13 +140,13 @@ public class MainActivity extends Activity implements CvCameraViewListener2 {
         // Actual frame classification
         classifiedFrame = frameClassifier.process(postProcessedFrame);
 
-//        currentLetter = getDisplayableLetter(postProcessedFrame.getLetterClass().toString());
+        currentLetter = getDisplayableLetter(classifiedFrame.getLetterClass().toString());
 
-//        // Display anything required
+        // Display anything required
 //        mainRenderer.display(postProcessedFrame);
 
         // Return processed Mat
-        return postProcessedFrame.getRGBA();
+        return classifiedFrame.getRGBA();
     }
 
     @Override
@@ -176,7 +176,7 @@ public class MainActivity extends Activity implements CvCameraViewListener2 {
 
     public void onCameraViewStarted(int width, int height) {
 
-        setProcessors(DetectionMethod.CANNY_EDGES);
+        setProcessors(DetectionMethod.CONTOUR_MASK);
 
         File xmlFile = initialiseXMLTrainingData();
 

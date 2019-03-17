@@ -36,12 +36,16 @@ public class CroppingFrameProcessor implements IFrameProcessor {
         switch (detectionMethod){
             case CANNY_EDGES:
                 inputFrame.setWindowMask(cropImage(inputFrame.getWindowMask()));
+                break;
             case SKELETON:
                 inputFrame.setMaskedImage(cropImage(inputFrame.getMaskedImage()));
+                break;
             case CONTOUR_MASK:
-                // do nothing
+                inputFrame.setWindowMask(cropImage(inputFrame.getWindowMask()));
+                break;
             default:
                 // do nothing
+                break;
 
         }
 
@@ -76,9 +80,9 @@ public class CroppingFrameProcessor implements IFrameProcessor {
                     Size scaledSize = new Size();
 
                     if (currentSize.height < currentSize.width) {
-                        scaleFactor = Math.max(1, (targetWidth / currentSize.width) - 0.1);
+                        scaleFactor = Math.max(1, targetWidth / currentSize.width);
                     } else {
-                        scaleFactor = Math.max(1, (targetWidth / currentSize.height) - 0.1);
+                        scaleFactor = Math.max(1, targetWidth / currentSize.height);
                     }
 
                     scaledSize.height = Math.floor(currentSize.height * scaleFactor);

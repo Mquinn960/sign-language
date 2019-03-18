@@ -111,8 +111,8 @@ public class MainActivity extends Activity implements CvCameraViewListener2 {
             @Override
             public void onClick(View v)
             {
-
-                txtView.append(currentLetter);
+                if (!modLetter.equals("?"))
+                    txtView.append(modLetter);
             }
         });
         btnClear.setOnClickListener(new View.OnClickListener()
@@ -238,7 +238,7 @@ public class MainActivity extends Activity implements CvCameraViewListener2 {
         }
     }
 
-    private void setPossibleLetter(final String currentLetter){
+    private void setPossibleLetter(final String currentLetterForMod){
 
         runOnUiThread(new Runnable() {
 
@@ -247,18 +247,24 @@ public class MainActivity extends Activity implements CvCameraViewListener2 {
 
                 if (txtView.getText().toString().length() > 0)
                     txtView.setText(txtView.getText().toString().substring(0, txtView.getText().toString().length() - 1));
-                txtView.append(currentLetter);
+
+                txtView.append(currentLetterForMod);
 
             }
         });
     }
 
     private String getDisplayableLetter(String letter){
-        if (letter.length() == 1){
-            return letter;
-        } else {
-            return "";
+
+        switch (letter){
+            case "NONE":
+                return "?";
+            case "SPACE":
+                return " ";
+            default:
+                return letter;
         }
+
     }
 
     private File initialiseXMLTrainingData(){

@@ -73,6 +73,7 @@
                 android:gravity="center"
                 android:text="@string/txtvw_word"
                 android:textColor="@color/colorAccent"
+                android:background="#333"
                 android:textSize="24sp" />
 
             <Space

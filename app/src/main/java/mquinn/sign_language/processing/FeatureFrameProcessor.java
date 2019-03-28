@@ -33,17 +33,17 @@ public class FeatureFrameProcessor implements IFrameProcessor {
         detectionMethod = inputDetectionMethod;
 
         hog = new HOGDescriptor(
-                new Size(32,32), //winSize
-                new Size(16,16), //blocksize
-                new Size(8,8), //blockStride,
-                new Size(8,8), //cellSize,
-                9, //nbins,
-                1, //derivAper,
-                -1, //winSigma,
-                HOGDescriptor.L2Hys, //histogramNormType,
-                0.2, //L2HysThresh,
-                true,//gammal correction,
-                HOGDescriptor.DEFAULT_NLEVELS,//nlevels=64
+                new Size(32,32), // Window Size
+                new Size(16,16), // Block Size
+                new Size(8,8), // Block Stride,
+                new Size(8,8), // Cell Size,
+                9,
+                1,
+                -1,
+                HOGDescriptor.L2Hys, // Histogram Norm Type,
+                0.2,
+                true,
+                HOGDescriptor.DEFAULT_NLEVELS, // nLevels
                 true);
     }
 

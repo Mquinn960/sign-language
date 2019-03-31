@@ -26,6 +26,7 @@ The current beta version of this app can be tested here:
 * Load in a trained SVM XML file created using the Offline Trainer
   * https://github.com/Mquinn960/offline-trainer
   * You must place the file (named ```trained.xml```) in the  ```sign-language\app\src\main\res\raw\``` directory. This gets loaded when running the app the first time.
+  * Note: If you're just looking for a quick start, then  you can download a sample ```trained.xml``` **[here](https://drive.google.com/open?id=12qacJUjiKk5l_TmHY-olxb72GG3Je7CI)**
 * Ensure you have an Android smartphone connected to your computer, and that [debugging](https://developer.android.com/studio/debug/dev-options) is enabled
 * It is recommended that you use the Android Studio IDE noted below
 

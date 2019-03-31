@@ -5,7 +5,7 @@ The Sign Language app is an Android application which can translate static ASL a
 * https://github.com/Mquinn960/dataset-creator
 
 The current beta version of this app can be tested here:
-https://play.google.com/store/apps/details?id=mquinn.sign_language
+* https://play.google.com/store/apps/details?id=mquinn.sign_language
 
 (Click the image below to watch the video demo)
 [![Alt text](/Preview.png?raw=true "Preview")](https://youtu.be/8Ta_CMhd454)
@@ -35,7 +35,13 @@ https://play.google.com/store/apps/details?id=mquinn.sign_language
 
 ## User Guide
 
-* todo
+* Using this app requires the use of a ```trained.xml``` file, which contains the Machine Learning information required to make predictions about your Sign Language gestures
+* Follow the instructions found in the Offline Trainer repo to create this file from input image training data you create using the Dataset Creator app, or find online - for more info see the Offline Trainer repo
+    * https://github.com/Mquinn960/offline-trainer
+    * https://github.com/Mquinn960/dataset-creator
+* Once the ```trained.xml``` file has been added to the app ```raw``` resources folder as per the Prerequisites
+* Start the app, and point the smartphone camera at a person performing Sign Language alphabet gestures
+* Use the onscreen buttons to capture the translated gestures
 
 ### Exporting the imaging kernel
 
@@ -46,8 +52,9 @@ If you want to alter the Sign Language app and then use the Sign Language app's 
 * Uncomment the ```com.android.library``` task
 * Perform a Grade sync
 * Run the ```make-jar``` Gradle task
-* Find the exported imaging kernel ### and import this into the Offline Trainer's "new" folder, as described in the repo README
+* Find the exported imaging kernel ```sign-language\app\build\outputs\jar\app-release-null.jar``` and import this into the Offline Trainer's "new" folder, as described in the repo README
   * https://github.com/Mquinn960/offline-trainer
+* (Optional) Run any training you want to do in the Offline Trainer, then take the trained SVM XML file and import it into the Sign Language app as descibed in the User Guide above
 * Undo steps 2 and 3 and run the main ```app``` task again.
 
 ## Built With

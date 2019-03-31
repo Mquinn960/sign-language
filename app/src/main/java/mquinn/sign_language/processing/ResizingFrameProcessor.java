@@ -40,13 +40,10 @@ public class ResizingFrameProcessor implements IFrameProcessor {
     private void downsize(IFrame inputFrame){
 
         originalSize = inputFrame.getOriginalSize();
-//
-//        scaleFactor = Math.max(1, (int) Math.floor(originalSize.width / targetWidth));
 
         scaledSize = new Size(originalSize.width/scaleFactor, originalSize.height/scaleFactor);
 
         Imgproc.resize(inputFrame.getRGBA(), resizedImage, defaultSize, 0, 0, Imgproc.INTER_CUBIC);
-//        Imgproc.resize(inputFrame.getRGBA(), resizedImage, scaledSize, 0, 0, Imgproc.INTER_CUBIC);
 
         inputFrame.setDownSampledMat(resizedImage);
     }

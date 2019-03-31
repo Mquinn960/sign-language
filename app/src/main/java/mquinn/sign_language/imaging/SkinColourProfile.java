@@ -49,10 +49,6 @@ public class SkinColourProfile {
 
     private void setDefaultSkinColourProfile(){
 
-        // Also possible values
-        //lowerBoundary = np.array([0,40,30],dtype="uint8")
-        //upperBoundary = np.array([43,255,254],dtype="uint8")
-
         // H
         lowerBound.val[0] = 0;
         upperBound.val[0] = 25;

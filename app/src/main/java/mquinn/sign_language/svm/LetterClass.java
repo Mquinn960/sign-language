@@ -52,10 +52,10 @@ public enum LetterClass {
         throw new IllegalArgumentException("Index not found");
     }
 
-    // Usage
+    // Example usage
 
-    //int myLetterIndex = 1;
-    //expected : A
-    //LetterClass myLetter = LetterClass.getLetter(myLetterIndex);
+    //  int myLetterIndex = 1;
+    //  expected : A
+    //  LetterClass myLetter = LetterClass.getLetter(myLetterIndex);
 
 }

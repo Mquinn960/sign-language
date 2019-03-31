@@ -1,7 +1,5 @@
 package mquinn.sign_language.processing;
 
-import android.util.Log;
-
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
 import org.opencv.core.Rect;
@@ -91,10 +89,6 @@ public class CroppingFrameProcessor implements IFrameProcessor {
                     resizedImage = new Mat(ROI.size(), inputMat.type());
 
                     Imgproc.resize(inputMat, resizedImage, scaledSize);
-
-
-//                    Imgproc.resize( img, new Mat(square,roi), roi.size() );
-
 
                     return resizedImage;
 

@@ -52,9 +52,7 @@ public class FrameClassifier implements IFrameProcessor {
     @Override
     public IFrame process(IFrame inputFrame) {
         workingFrame = inputFrame;
-//        if (isEligibleToClassify()) {
-            classify();
-//        }
+        classify();
 
         return workingFrame;
     }
@@ -85,7 +83,6 @@ public class FrameClassifier implements IFrameProcessor {
     }
 
     private void flattenFeatures(){
-//        flatFeatures = features.reshape(1,1);
 
         flatFeatures = workingFrame.getHogDesc();
         flatFeatures = flatFeatures.reshape(1,1);
@@ -93,7 +90,7 @@ public class FrameClassifier implements IFrameProcessor {
     }
 
 
-//
+//    Not currently used - to be implemented
 //    private void pcaReduce () {
 //        // features
 //

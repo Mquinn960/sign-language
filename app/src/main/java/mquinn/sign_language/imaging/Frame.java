@@ -49,10 +49,6 @@ public class Frame extends Mat implements IFrame {
     // Original size of the input frame
     private Size originalSize;
 
-    private Mat siftFeatures;
-
-    private Mat huMomentFeat;
-
     private Mat hogDesc;
 
     public Frame(Mat inputRGBA) {
@@ -177,26 +173,6 @@ public class Frame extends Mat implements IFrame {
     @Override
     public void setLetterClass(LetterClass letter) {
         this.letter = letter;
-    }
-
-    @Override
-    public Mat getSiftFeatures() {
-        return siftFeatures;
-    }
-
-    @Override
-    public void setSiftFeatures(Mat siftFeatures) {
-        this.siftFeatures = siftFeatures;
-    }
-
-    @Override
-    public Mat getHuMomentFeat() {
-        return huMomentFeat;
-    }
-
-    @Override
-    public void setHuMomentFeat(Mat huMomentFeat) {
-        this.huMomentFeat = huMomentFeat;
     }
 
     @Override

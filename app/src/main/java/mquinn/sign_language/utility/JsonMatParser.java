@@ -13,6 +13,7 @@ import static android.content.ContentValues.TAG;
 
 public class JsonMatParser {
 
+    // Not currently used
     public static String matToJson(Mat mat){
         JsonObject obj = new JsonObject();
 

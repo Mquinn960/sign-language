@@ -18,6 +18,7 @@ public class OutputFramePostProcessor implements IFramePostProcessor {
     @Override
     public IFrame postProcess(IFrame inputFrame) {
 
+        // Currently Unused
 //        outputFrame = resizer.process(inputFrame);
 
 //        outputFrame = upScalingFramePostProcessor.postProcess(outputFrame);

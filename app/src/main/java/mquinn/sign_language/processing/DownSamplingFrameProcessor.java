@@ -18,8 +18,6 @@ public class DownSamplingFrameProcessor implements IFrameProcessor {
     @Override
     public IFrame process(IFrame inputFrame) {
         return downSample(inputFrame, 2);
-//        inputFrame.setDownSampledMat(inputFrame.getRGBA());
-//        return inputFrame;
     }
 
     private IFrame downSample(IFrame frameToSample, int samples){

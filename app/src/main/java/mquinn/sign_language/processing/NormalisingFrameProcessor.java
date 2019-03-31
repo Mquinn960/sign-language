@@ -66,10 +66,7 @@ public class NormalisingFrameProcessor implements IFrameProcessor {
             roi.x = ( target_width - roi.width ) / 2;
         }
 
-//        Mat imageROI = new Mat(square,roi);
-
         Imgproc.resize( img, new Mat(square,roi), roi.size() );
-
 
         return square;
     }

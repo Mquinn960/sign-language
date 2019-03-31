@@ -32,7 +32,7 @@ public class CameraFrameAdapter implements IFramePreProcessor {
         // Set the original size of the frame
         outputFrame.setOriginalSize(inputFrame.rgba().size());
 
-        // Resize image
+        // Resize image - currently unused
 //        outputFrame = resizer.process(outputFrame);
 
         // Further downsampling for efficiency

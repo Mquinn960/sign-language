@@ -7,7 +7,7 @@ The Sign Language app is an Android application which can translate static ASL a
 The current beta version of this app can be tested here:
 * https://play.google.com/store/apps/details?id=mquinn.sign_language
 
-(Click the image below to watch the video demo)
+**(Click the image below to watch the video demo)**
 [![Alt text](/Preview.png?raw=true "Preview")](https://youtu.be/8Ta_CMhd454)
 
 ## Getting Started

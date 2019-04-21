@@ -38,6 +38,8 @@ The current beta version of this app can be tested here:
 
 ## User Guide
 
+### For a comprehensive step by step guide on using these applications and some additional info on how they work, please see [my new help repo](https://github.com/Mquinn960/sign-language-help)
+
 * Using this app requires the use of a ```trained.xml``` file, which contains the Machine Learning information required to make predictions about your Sign Language gestures
 * Follow the instructions found in the Offline Trainer repo to create this file from input image training data you create using the Dataset Creator app, or find online - for more info see the Offline Trainer repo
     * https://github.com/Mquinn960/offline-trainer

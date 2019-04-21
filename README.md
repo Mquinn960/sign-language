@@ -10,6 +10,8 @@ The current beta version of this app can be tested here:
 **(Click the image below to watch the video demo)**
 [![Alt text](/Preview.png?raw=true "Preview")](https://youtu.be/8Ta_CMhd454)
 
+## For a comprehensive step by step guide on using these applications and some additional info on how they work, please see [my new help repo](https://github.com/Mquinn960/sign-language-help)
+
 ## Getting Started
 
 * Clone the repo onto your local machine by using:

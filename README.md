@@ -55,7 +55,7 @@ If you want to alter the Sign Language app and then use the Sign Language app's 
 * Edit the app's Gradle build file ```sign-language\app\build.gradle```
 * Comment out the entire ```com.android.application``` build step
 * Uncomment the ```com.android.library``` task
-* Perform a Grade sync
+* Perform a Gradle sync
 * Run the ```make-jar``` Gradle task
 * Find the exported imaging kernel ```sign-language\app\build\outputs\jar\app-release-null.jar``` and import this into the Offline Trainer's "new" folder, as described in the repo README
   * https://github.com/Mquinn960/offline-trainer
